@@ -699,11 +699,19 @@ html {
 .hk-row {
   display: flex;
   gap: 4px;
-  justify-content: center;
+  justify-content: flex-start;
 }
+
+/* Stagger horizontal pour reproduire la disposition d'un clavier 두벌식
+   physique : la rangée du milieu (ㅁㄴㅇ…) est décalée d'une demi-touche
+   à droite, la rangée du bas (ㅋㅌㅊ…) d'une touche pleine. */
+.hk-row:nth-child(2) { padding-left: 30px; }
+.hk-row:nth-child(3) { padding-left: 60px; }
 
 .hk-row.hk-util {
   margin-top: 2px;
+  justify-content: center;
+  padding-left: 0;
 }
 
 .hk-key {
