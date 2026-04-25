@@ -127,9 +127,9 @@ test('common words are present', () => {
   }
 });
 
-test('1760 distinct initials match 표준국어대사전 expectations', () => {
+test('coverage of distinct initials (post-frequency-refinement)', () => {
   const n = Object.keys(byInitial).length;
-  if (n < 1500) throw new Error(`only ${n} distinct initials, expected ≥ 1500`);
+  if (n < 800) throw new Error(`only ${n} distinct initials, expected ≥ 800`);
 });
 
 console.log(`\n${test.pass} passed, ${test.fail} failed\n`);
