@@ -453,7 +453,11 @@ html {
   border-radius: var(--radius);
   /* padding latérale généreuse pour laisser respirer les U cross-row */
   padding: 18px 60px;
-  max-height: 60vh;
+  /* Remplit toute la hauteur disponible jusqu'à l'input fixe (via le
+     padding-bottom du layout). flex/min-height pour permettre le scroll
+     interne quand le contenu déborde. */
+  flex: 1 1 0;
+  min-height: 0;
   overflow-x: hidden;
   overflow-y: auto;
 }
@@ -582,19 +586,21 @@ html {
   background: var(--bg-1);
   border-radius: var(--radius);
   border: 1px solid var(--border);
-  /* Toujours ancré en bas du viewport, indépendant de la hauteur de
-     la chaîne. Centré horizontalement avec max-width. */
+  /* Toujours ancré en bas du viewport, largeur exactement adaptée au
+     contenu (input fixé + boutons), centrée horizontalement. */
   position: fixed;
   bottom: calc(env(safe-area-inset-bottom) + 16px);
   left: 16px;
   right: 16px;
   margin-inline: auto;
-  max-width: 720px;
+  width: fit-content;
+  max-width: calc(100% - 32px);
   z-index: 40;
 }
 
 .input-bar input {
-  flex: 1 1 0;
+  flex: 0 0 320px;
+  min-width: 0;
   background: var(--bg-2);
   border: 1px solid var(--border);
   outline: none;
