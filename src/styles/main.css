@@ -19,9 +19,10 @@
   --danger: #b8362b;   /* 적색 */
   --danger-soft: rgba(184, 54, 43, 0.12);
 
-  /* Scrollbar (teinte accent or 황금 sur fond sombre) */
-  --scroll-track: rgba(184, 134, 11, 0.05);
-  --scroll-thumb: rgba(184, 134, 11, 0.32);
+  /* Scrollbar : neutre clair (basée sur --fg) pour ne pas être confondue
+     avec une couleur joueur ; hover accent or 황금. */
+  --scroll-track: rgba(236, 229, 211, 0.04);
+  --scroll-thumb: rgba(236, 229, 211, 0.22);
   --scroll-thumb-hover: var(--accent);
 
   /* Player palette (단청 inspirée — fonctionne sur les deux thèmes) */
@@ -46,9 +47,9 @@
   --danger: #952820;
   --danger-soft: rgba(149, 40, 32, 0.1);
 
-  /* Scrollbar (teinte accent indigo 남 sur fond hanji) */
-  --scroll-track: rgba(26, 73, 120, 0.05);
-  --scroll-thumb: rgba(26, 73, 120, 0.28);
+  /* Scrollbar : neutre encre (basée sur --fg) ; hover accent indigo 남. */
+  --scroll-track: rgba(31, 26, 20, 0.05);
+  --scroll-thumb: rgba(31, 26, 20, 0.22);
   --scroll-thumb-hover: var(--accent);
 
   /* Player palette identique : couleurs 단청 lisibles sur les deux fonds */
