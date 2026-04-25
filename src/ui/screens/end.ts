@@ -8,8 +8,7 @@ export function renderEnd(root: HTMLElement) {
   const ranked = [...s.players].sort((a, b) => b.score - a.score);
 
   let title = '게임 종료';
-  if (s.winnerId === -1) title = '무승부';
-  else if (s.winnerId !== null) {
+  if (s.winnerId !== null) {
     const w = s.players.find((p) => p.id === s.winnerId);
     if (w) title = `${w.name} 승리!`;
   }

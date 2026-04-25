@@ -18,7 +18,6 @@ interface Move {
   playerId: number;
   auto: boolean;       // mot trouvé via le bouton "trouver auto" (0 point)
   isHanbang: boolean;  // ce mot tue la chaîne → tour suivant libre
-  ts: number;
 }
 
 interface GameState {
@@ -96,7 +95,6 @@ class Store extends EventTarget {
         playerId: -1,             // -1 = système (mot d'amorce)
         auto: true,
         isHanbang: isHanbang(firstWord, dict, cfg.duumOn),
-        ts: Date.now(),
       });
     }
     this.s = {
@@ -149,8 +147,8 @@ class Store extends EventTarget {
   }
 
   /** Coup IA (joueur isAI). Stratégie safe-first. */
-  aiPlay(): { played: string | null } {
-    if (this.s.phase !== 'playing') return { played: null };
+  aiPlay() {
+    if (this.s.phase !== 'playing') return;
     const dict = getDict();
     const prev = this.s.freeNextTurn ? null : this.prevWord();
     const w = pickWord(prev, dict, this.s.usedWords, this.s.duumOn, {
@@ -159,10 +157,9 @@ class Store extends EventTarget {
     if (!w) {
       // IA bloquée : la partie se termine, l'autre joueur gagne.
       this.endGameByBlock();
-      return { played: null };
+      return;
     }
     this.applyMove(w, false);
-    return { played: w };
   }
 
   private applyMove(word: string, auto: boolean) {
@@ -175,7 +172,6 @@ class Store extends EventTarget {
       playerId: player.id,
       auto,
       isHanbang: isHb,
-      ts: Date.now(),
     });
     this.s.usedWords.add(word);
     this.s.freeNextTurn = isHb;

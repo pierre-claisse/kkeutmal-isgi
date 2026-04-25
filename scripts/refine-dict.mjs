@@ -1,11 +1,11 @@
-// Refine src/data/dict.json en gardant les 150 000 noms les plus fréquemment
-// utilisés en coréen contemporain.
+// Refine src/data/dict.json en ne gardant que les noms attestés en
+// corpus contemporain (score de fréquence > 0).
 //
 // Source de fréquence : OpenSubtitles ko (hermitdave/FrequencyWords).
 // Pour chaque noun N de notre dictionnaire, on somme la fréquence de ses
 // formes de surface (N suivi de particules courantes : 가, 은, 를, 의, 에…).
-//
-// Tri : fréquence décroissante, puis longueur croissante, puis alphabétique.
+// Le tri par score est utilisé pour les samples top/bottom dans le log,
+// puis le résultat final est ré-ordonné alphabétiquement pour stabilité.
 
 import { mkdir, readFile, stat, writeFile } from 'node:fs/promises';
 import { dirname, resolve, join } from 'node:path';

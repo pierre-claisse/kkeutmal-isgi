@@ -17,8 +17,6 @@ export function h<K extends keyof HTMLElementTagNameMap>(
       el.className = String(v);
     } else if (k === 'style') {
       el.setAttribute('style', String(v));
-    } else if (k === 'html') {
-      el.innerHTML = String(v);
     } else {
       el.setAttribute(k, v === true ? '' : String(v));
     }
