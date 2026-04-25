@@ -409,7 +409,6 @@ html {
 }
 
 .pebble-chain {
-  position: relative;
   background: var(--bg-1);
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -419,30 +418,38 @@ html {
   scroll-behavior: smooth;
 }
 
+.pebble-stage {
+  position: relative;
+}
+
 .pebble-paths {
   position: absolute;
-  inset: 18px 14px auto;
-  height: calc(100% - 36px);
+  inset: 0;
   pointer-events: none;
   z-index: 0;
 }
 
-.pebbles {
+.pebble-rows {
   position: relative;
   z-index: 1;
   display: flex;
-  flex-wrap: wrap;
-  gap: 14px 18px;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.pebble-row {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 16px;
   align-items: center;
 }
 
-/* Vague subtile : alternance de positions verticales par cycle de 4 */
-.pebble:nth-child(4n + 1) { transform: translateY(0); }
-.pebble:nth-child(4n + 2) { transform: translateY(-6px); }
-.pebble:nth-child(4n + 3) { transform: translateY(0); }
-.pebble:nth-child(4n + 4) { transform: translateY(6px); }
+.pebble-row.rtl {
+  flex-direction: row-reverse;
+}
 
 .pebble {
+  flex-shrink: 0;
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -453,7 +460,6 @@ html {
   font-family: var(--font-display);
   color: var(--fg);
   white-space: nowrap;
-  transition: transform 0.15s ease;
 }
 
 .pebble.hanbang {

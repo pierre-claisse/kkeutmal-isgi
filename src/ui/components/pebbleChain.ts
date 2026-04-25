@@ -1,6 +1,7 @@
-// Affichage de la chaîne sous forme de "pierres" (pebbles) reliées par des
-// courbes de Bézier organiques. Wave subtile par nth-child + paths SVG
-// recalculés via ResizeObserver.
+// Affichage de la chaîne en serpentin de pierres :
+// rang 0 gauche→droite, rang 1 droite→gauche, rang 2 gauche→droite, ...
+// Reliés par des courbes de Bézier organiques. Bin-packing greedy basé
+// sur la largeur naturelle des pebbles, recalculé via ResizeObserver.
 
 import { googleTranslateUrl, naverUrl } from '../../util/naverLink';
 
@@ -12,34 +13,43 @@ export interface PebbleData {
 }
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
+const PEBBLE_GAP = 16;
+const STAGE_PAD_X = 14;
 
 export function buildPebbleChain(items: readonly PebbleData[]): HTMLElement {
   const wrap = document.createElement('div');
   wrap.className = 'pebble-chain';
 
-  // Couche SVG pour les liens entre pierres (en arrière-plan).
+  const stage = document.createElement('div');
+  stage.className = 'pebble-stage';
+  wrap.appendChild(stage);
+
+  // Couche SVG (en arrière-plan).
   const svg = document.createElementNS(SVG_NS, 'svg');
   svg.setAttribute('class', 'pebble-paths');
   svg.setAttribute('aria-hidden', 'true');
   svg.setAttribute('preserveAspectRatio', 'none');
-  wrap.appendChild(svg);
+  stage.appendChild(svg);
 
-  // Conteneur flex des pierres, en avant-plan.
-  const list = document.createElement('div');
-  list.className = 'pebbles';
-  for (let i = 0; i < items.length; i++) {
-    list.appendChild(buildPebble(items[i]!, i + 1));
-  }
-  wrap.appendChild(list);
+  // Conteneur des rangs (en avant-plan).
+  const rowsContainer = document.createElement('div');
+  rowsContainer.className = 'pebble-rows';
+  stage.appendChild(rowsContainer);
 
-  const redraw = () => drawPaths(list, svg, items);
+  // Construire toutes les pebbles (réutilisées entre re-layouts).
+  const pebbleEls = items.map((item, idx) => buildPebble(item, idx + 1));
 
-  // Recalcule les paths quand le layout change (resize, wrap recalcul).
-  const ro = new ResizeObserver(redraw);
-  ro.observe(list);
+  const layout = () => {
+    binPackIntoRows(wrap, rowsContainer, pebbleEls);
+    drawPaths(stage, rowsContainer, svg, items);
+  };
 
-  // Premier rendu au prochain frame (les éléments doivent être attachés au DOM).
-  requestAnimationFrame(redraw);
+  // Recalcule sur tout changement de taille du conteneur.
+  const ro = new ResizeObserver(layout);
+  ro.observe(wrap);
+
+  // Premier rendu après que les éléments soient dans le DOM.
+  requestAnimationFrame(layout);
 
   return wrap;
 }
@@ -95,37 +105,99 @@ function buildPebble(p: PebbleData, displayIdx: number): HTMLElement {
   return el;
 }
 
-function drawPaths(list: HTMLElement, svg: SVGSVGElement, items: readonly PebbleData[]) {
-  const containerRect = list.getBoundingClientRect();
-  if (containerRect.width === 0) return;
+function binPackIntoRows(
+  wrap: HTMLElement,
+  rowsContainer: HTMLElement,
+  pebbles: readonly HTMLElement[],
+) {
+  const usableWidth = wrap.clientWidth - 2 * STAGE_PAD_X;
+  if (usableWidth <= 0) return;
 
-  svg.setAttribute('width', String(containerRect.width));
-  svg.setAttribute('height', String(containerRect.height));
-  svg.setAttribute('viewBox', `0 0 ${containerRect.width} ${containerRect.height}`);
+  // Vide les rangs sans détacher les pebbles (on les ré-attache).
+  while (rowsContainer.firstChild) rowsContainer.removeChild(rowsContainer.firstChild);
+
+  let rowIdx = 0;
+  let row = makeRow(rowIdx);
+  rowsContainer.appendChild(row);
+  let rowWidth = 0;
+
+  for (let i = 0; i < pebbles.length; i++) {
+    const pebble = pebbles[i]!;
+    row.appendChild(pebble);            // attache pour mesurer
+    const w = pebble.offsetWidth;
+
+    const candidateWidth = rowWidth === 0 ? w : rowWidth + PEBBLE_GAP + w;
+    if (rowWidth > 0 && candidateWidth > usableWidth) {
+      // Ne tient pas : on retire et on ouvre un nouveau rang.
+      row.removeChild(pebble);
+      rowIdx++;
+      row = makeRow(rowIdx);
+      rowsContainer.appendChild(row);
+      row.appendChild(pebble);
+      rowWidth = w;
+    } else {
+      rowWidth = candidateWidth;
+    }
+    pebble.dataset.row = String(rowIdx);
+  }
+}
+
+function makeRow(idx: number): HTMLElement {
+  const row = document.createElement('div');
+  // Rangs pairs (0, 2, 4 …) gauche→droite ; impairs droite→gauche.
+  row.className = idx % 2 === 1 ? 'pebble-row rtl' : 'pebble-row';
+  return row;
+}
+
+function drawPaths(
+  stage: HTMLElement,
+  rowsContainer: HTMLElement,
+  svg: SVGSVGElement,
+  items: readonly PebbleData[],
+) {
+  const stageRect = stage.getBoundingClientRect();
+  if (stageRect.width === 0) return;
+
+  svg.setAttribute('width', String(stageRect.width));
+  svg.setAttribute('height', String(stageRect.height));
+  svg.setAttribute('viewBox', `0 0 ${stageRect.width} ${stageRect.height}`);
 
   while (svg.firstChild) svg.removeChild(svg.firstChild);
 
-  const pebbleEls = list.querySelectorAll<HTMLElement>('.pebble');
+  const pebbleEls = rowsContainer.querySelectorAll<HTMLElement>('.pebble');
   for (let i = 0; i < pebbleEls.length - 1; i++) {
-    const a = pebbleEls[i]!.getBoundingClientRect();
-    const b = pebbleEls[i + 1]!.getBoundingClientRect();
+    const a = pebbleEls[i]!;
+    const b = pebbleEls[i + 1]!;
 
-    const x1 = a.right - containerRect.left;
-    const y1 = a.top + a.height / 2 - containerRect.top;
-    const x2 = b.left - containerRect.left;
-    const y2 = b.top + b.height / 2 - containerRect.top;
-    const dx = x2 - x1;
-    const dy = y2 - y1;
+    const rA = Number(a.dataset.row ?? 0);
+    const rB = Number(b.dataset.row ?? 0);
+    const dirA = rA % 2 === 0 ? 1 : -1; // 1 = LTR, -1 = RTL
+    const dirB = rB % 2 === 0 ? 1 : -1;
 
-    // Pas de path quand on saute de rang : la lecture top-left → bottom-right
-    // suffit, et un cross-row path serait visuellement chargé.
-    if (Math.abs(dy) > 30) continue;
+    const aRect = a.getBoundingClientRect();
+    const bRect = b.getBoundingClientRect();
 
-    // Bézier cubic horizontale, légèrement bombée vers le haut, alternance
-    // de bombement pour un rendu organique.
-    const bend = i % 2 === 0 ? -10 : 10;
-    const co = Math.max(18, Math.min(70, dx * 0.5));
-    const d = `M ${x1},${y1} C ${x1 + co},${y1 + bend} ${x2 - co},${y2 + bend} ${x2},${y2}`;
+    // Point sortant de A : côté droit si LTR, côté gauche si RTL.
+    const x1 = (dirA === 1 ? aRect.right : aRect.left) - stageRect.left;
+    const y1 = aRect.top + aRect.height / 2 - stageRect.top;
+    // Point entrant de B : côté gauche si LTR, côté droit si RTL.
+    const x2 = (dirB === 1 ? bRect.left : bRect.right) - stageRect.left;
+    const y2 = bRect.top + bRect.height / 2 - stageRect.top;
+
+    let d: string;
+    if (rA === rB) {
+      // Même rang : arc horizontal léger (alternance haut/bas pour rythme).
+      const dx = x2 - x1;
+      const direction = dx >= 0 ? 1 : -1;
+      const co = Math.max(18, Math.min(70, Math.abs(dx) * 0.5));
+      const bend = i % 2 === 0 ? -9 : 9;
+      d = `M ${x1},${y1} C ${x1 + direction * co},${y1 + bend} ${x2 - direction * co},${y2 + bend} ${x2},${y2}`;
+    } else {
+      // Cross-row : arc en U vertical du bon côté du conteneur.
+      const side = dirA; // bombe à droite si on sort à droite, à gauche sinon.
+      const offset = 28;
+      d = `M ${x1},${y1} C ${x1 + side * offset},${y1 + 8} ${x2 + side * offset},${y2 - 8} ${x2},${y2}`;
+    }
 
     const path = document.createElementNS(SVG_NS, 'path');
     path.setAttribute('d', d);
