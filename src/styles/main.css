@@ -715,9 +715,8 @@ html {
 }
 
 .hk-key {
-  flex: 1 1 0;
-  min-width: 32px;
-  max-width: 56px;
+  flex: 0 0 auto;
+  width: 56px;
   height: 44px;
   background: var(--bg-2);
   border: 1px solid var(--border);
@@ -740,8 +739,7 @@ html {
 }
 
 .hk-util-key {
-  flex: 0 0 auto;
-  max-width: none;
+  width: auto;
   min-width: 80px;
   font-size: 1.05rem;
 }
