@@ -36,6 +36,14 @@ export function renderHome(root: HTMLElement) {
   };
   buildPlayersInputs();
 
+  // Clamp à la perte de focus / Enter, et reflète la valeur clampée à l'écran.
+  // (HTML5 min/max ne bloque pas la saisie manuelle hors bornes.)
+  const clampInput = (el: HTMLInputElement, lo: number, hi: number): number => {
+    const v = clamp(Number(el.value), lo, hi);
+    el.value = String(v);
+    return v;
+  };
+
   const timeWrap = h(
     'label',
     { class: 'row mode-value', hidden: !isTime() },
@@ -46,8 +54,8 @@ export function renderHome(root: HTMLElement) {
       max: 3600,
       value: timeSec,
       step: 10,
-      oninput: (e: Event) => {
-        timeSec = clamp(Number((e.target as HTMLInputElement).value), 60, 3600);
+      onchange: (e: Event) => {
+        timeSec = clampInput(e.target as HTMLInputElement, 60, 3600);
       },
     }),
   );
@@ -61,8 +69,8 @@ export function renderHome(root: HTMLElement) {
       max: 1000,
       value: scoreTarget,
       step: 1,
-      oninput: (e: Event) => {
-        scoreTarget = clamp(Number((e.target as HTMLInputElement).value), 10, 1000);
+      onchange: (e: Event) => {
+        scoreTarget = clampInput(e.target as HTMLInputElement, 10, 1000);
       },
     }),
   );
