@@ -2,7 +2,7 @@
 
 import { ERROR_MESSAGES } from '../../engine/rules';
 import { store } from '../../state/store';
-import { naverUrl } from '../../util/naverLink';
+import { googleTranslateUrl, naverUrl } from '../../util/naverLink';
 import { h } from '../dom';
 import { colorFor } from '../theme';
 
@@ -121,7 +121,7 @@ export function renderGame(root: HTMLElement) {
         h(
           'a',
           {
-            class: 'naver',
+            class: 'lookup naver',
             href: naverUrl(m.word),
             target: '_blank',
             rel: 'noopener noreferrer',
@@ -129,6 +129,18 @@ export function renderGame(root: HTMLElement) {
             'aria-label': `${m.word} - Naver 사전`,
           },
           '↗',
+        ),
+        h(
+          'a',
+          {
+            class: 'lookup gt',
+            href: googleTranslateUrl(m.word),
+            target: '_blank',
+            rel: 'noopener noreferrer',
+            title: 'Google 번역 (KO→FR)',
+            'aria-label': `${m.word} - Traduction française via Google Translate`,
+          },
+          'FR',
         ),
         m.auto ? h('span', { class: 'flag' }, 'auto') : null,
         m.isHanbang ? h('span', { class: 'flag hb' }, '한방') : null,

@@ -393,19 +393,31 @@ body.amoled {
   flex: 1;
 }
 
-.chain-item .naver {
+.chain-item .lookup {
   color: var(--fg-mute);
   text-decoration: none;
   font-family: var(--font-display);
-  font-size: 1.1rem;
+  font-weight: 600;
+  font-size: 0.95rem;
   padding: 2px 6px;
   border-radius: 4px;
   transition: color 0.15s, background 0.15s;
+  white-space: nowrap;
 }
 
-.chain-item .naver:hover {
+.chain-item .lookup.naver {
+  font-size: 1.1rem;
+  font-weight: 400;
+}
+
+.chain-item .lookup.naver:hover {
   color: var(--p1);
   background: rgba(0, 240, 255, 0.08);
+}
+
+.chain-item .lookup.gt:hover {
+  color: var(--p2);
+  background: rgba(255, 46, 196, 0.08);
 }
 
 .chain-item .flag {
