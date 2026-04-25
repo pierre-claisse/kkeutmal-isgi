@@ -10,7 +10,7 @@ export type Mode =
   | { kind: 'score'; target: number };
 
 export interface Player {
-  id: number;
+  id: number; // 0..5 (jusqu'à 6 joueurs ; 6e slot = IA en mode 1 joueur)
   name: string;
   color: string;
   score: number;
@@ -42,8 +42,7 @@ export interface GameState {
 }
 
 export interface StartConfig {
-  playerNames: string[];   // 1..4
-  aiOpponent: boolean;     // si playerNames.length === 1
+  playerNames: string[]; // 1..6 ; en mode 1 joueur, l'IA est ajoutée d'office
   duumOn: boolean;
   mode: Mode;
 }
@@ -87,7 +86,8 @@ class Store extends EventTarget {
       score: 0,
       isAI: false,
     }));
-    if (players.length === 1 && cfg.aiOpponent) {
+    if (players.length === 1) {
+      // Mode 1 joueur ⇒ adversaire IA d'office (sinon, contre qui ?).
       players.push({
         id: 1,
         name: 'AI',

@@ -10,7 +10,6 @@ export function renderHome(root: HTMLElement) {
   let timeSec = 180;
   let scoreTarget = 10;
   let duumOn = true;
-  let aiOpponent = true;
   // TS narrowing helpers : éviter "comparison has no overlap" sur les `let` mutables
   // dont la valeur change uniquement dans des closures asynchrones.
   const isTime = () => modeKind === 'time';
@@ -36,22 +35,6 @@ export function renderHome(root: HTMLElement) {
     }
   };
   buildPlayersInputs();
-
-  const aiRow = h(
-    'label',
-    { class: 'row toggle ai-row', hidden: nbPlayers !== 1 },
-    h('input', {
-      type: 'checkbox',
-      checked: true,
-      onchange: (e: Event) => {
-        aiOpponent = (e.target as HTMLInputElement).checked;
-      },
-    }),
-    h('span', {}, 'AI 상대와 대전'),
-  );
-  const updateAiRow = () => {
-    aiRow.hidden = nbPlayers !== 1;
-  };
 
   const timeWrap = h(
     'label',
@@ -103,12 +86,7 @@ export function renderHome(root: HTMLElement) {
         const mode: Mode = isTime()
           ? { kind: 'time', seconds: clamp(timeSec, 60, 3600) }
           : { kind: 'score', target: clamp(scoreTarget, 10, 1000) };
-        store.startGame({
-          playerNames: names,
-          aiOpponent: nbPlayers === 1 && aiOpponent,
-          duumOn,
-          mode,
-        });
+        store.startGame({ playerNames: names, duumOn, mode });
       },
     },
     h('h1', { class: 'title neon' }, '끝말잇기'),
@@ -121,7 +99,7 @@ export function renderHome(root: HTMLElement) {
       h(
         'div',
         { class: 'row radios' },
-        ...[1, 2, 3, 4].map((n) =>
+        ...[1, 2, 3, 4, 5, 6].map((n) =>
           h(
             'label',
             { class: 'pill' },
@@ -133,7 +111,6 @@ export function renderHome(root: HTMLElement) {
               onchange: () => {
                 nbPlayers = n;
                 buildPlayersInputs();
-                updateAiRow();
               },
             }),
             h('span', {}, String(n)),
@@ -141,7 +118,6 @@ export function renderHome(root: HTMLElement) {
         ),
       ),
       playersGrid,
-      aiRow,
     ),
 
     h(
