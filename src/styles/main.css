@@ -417,7 +417,6 @@ html {
   max-height: 60vh;
   overflow-x: hidden;
   overflow-y: auto;
-  scroll-behavior: smooth;
 }
 
 .pebble-stage {
