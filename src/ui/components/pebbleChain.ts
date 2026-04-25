@@ -10,6 +10,7 @@ export interface PebbleData {
   color: string;     // déjà résolue (var(--pX) ou couleur muette)
   auto: boolean;
   isHanbang: boolean;
+  index: number;     // numéro chronologique 1-based affiché dans la pastille
 }
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -37,7 +38,7 @@ export function buildPebbleChain(items: readonly PebbleData[]): HTMLElement {
   stage.appendChild(rowsContainer);
 
   // Construire toutes les pebbles (réutilisées entre re-layouts).
-  const pebbleEls = items.map((item, idx) => buildPebble(item, idx + 1));
+  const pebbleEls = items.map((item) => buildPebble(item));
 
   const layout = () => {
     binPackIntoRows(wrap, rowsContainer, pebbleEls);
@@ -54,14 +55,14 @@ export function buildPebbleChain(items: readonly PebbleData[]): HTMLElement {
   return wrap;
 }
 
-function buildPebble(p: PebbleData, displayIdx: number): HTMLElement {
+function buildPebble(p: PebbleData): HTMLElement {
   const el = document.createElement('div');
   el.className = `pebble${p.isHanbang ? ' hanbang' : ''}`;
   el.style.setProperty('--c', p.color);
 
   const num = document.createElement('span');
   num.className = 'p-num';
-  num.textContent = String(displayIdx);
+  num.textContent = String(p.index);
   el.appendChild(num);
 
   const word = document.createElement('span');
