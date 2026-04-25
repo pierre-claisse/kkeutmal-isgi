@@ -681,6 +681,12 @@ html {
   border-color: var(--accent);
 }
 
+.kb-wrap {
+  max-width: 720px;
+  justify-self: center;
+  width: 100%;
+}
+
 .hangul-keyboard {
   background: var(--bg-1);
   border: 1px solid var(--border);
