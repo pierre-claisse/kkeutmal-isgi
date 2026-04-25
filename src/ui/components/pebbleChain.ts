@@ -186,21 +186,13 @@ function drawPaths(
 
     let d: string;
     if (rA === rB) {
-      // Même rang : S horizontal proportionnel à la distance.
-      // co est strictement < |dx|/2 pour éviter que les control points
-      // se croisent (cause des squiggles qu'on voyait avant).
-      const dx = x2 - x1;
-      const absDx = Math.abs(dx);
-      const direction = dx >= 0 ? 1 : -1;
-      const co = absDx * 0.42;
-      const bend = Math.min(5, absDx * 0.18);
-      d = `M ${x1},${y1} C ${x1 + direction * co},${y1 + bend} ${x2 - direction * co},${y2 - bend} ${x2},${y2}`;
+      // Même rang : beau U franc (control points strictement verticaux,
+      // bow constant → smile uniforme entre tous les pebbles).
+      const bow = 26;
+      d = `M ${x1},${y1} C ${x1},${y1 + bow} ${x2},${y2 + bow} ${x2},${y2}`;
     } else {
-      // Cross-row : coin arrondi compact, pas un grand arc qui déborde.
-      const side = dirA;
-      const dy = y2 - y1;
-      const offset = Math.max(24, Math.min(45, dy * 0.45));
-      d = `M ${x1},${y1} C ${x1 + side * offset},${y1} ${x2 + side * offset},${y2} ${x2},${y2}`;
+      // Cross-row : trait droit, point.
+      d = `M ${x1},${y1} L ${x2},${y2}`;
     }
 
     const path = document.createElementNS(SVG_NS, 'path');
