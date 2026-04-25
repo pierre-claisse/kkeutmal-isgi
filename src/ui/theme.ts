@@ -16,13 +16,16 @@ const THEME_COLORS: Record<Theme, string> = {
   light: '#f7f1e1',
 };
 
-function detectInitialTheme(): Theme {
-  if (typeof window === 'undefined') return 'dark';
-  const m = window.matchMedia('(prefers-color-scheme: light)');
-  return m.matches ? 'light' : 'dark';
+const lightQuery =
+  typeof window !== 'undefined'
+    ? window.matchMedia('(prefers-color-scheme: light)')
+    : null;
+
+function systemTheme(): Theme {
+  return lightQuery?.matches ? 'light' : 'dark';
 }
 
-let current: Theme = detectInitialTheme();
+let current: Theme = systemTheme();
 const listeners = new Set<(t: Theme) => void>();
 
 function applyTheme(t: Theme) {
@@ -31,14 +34,21 @@ function applyTheme(t: Theme) {
   if (meta) meta.setAttribute('content', THEME_COLORS[t]);
 }
 
+function setCurrent(t: Theme) {
+  current = t;
+  applyTheme(t);
+  for (const l of listeners) l(t);
+}
+
+// Si le thème du système change pendant la session, on suit.
+lightQuery?.addEventListener('change', () => setCurrent(systemTheme()));
+
 export function getTheme(): Theme {
   return current;
 }
 
 export function toggleTheme() {
-  current = current === 'dark' ? 'light' : 'dark';
-  applyTheme(current);
-  for (const l of listeners) l(current);
+  setCurrent(current === 'dark' ? 'light' : 'dark');
 }
 
 export function onThemeChange(cb: (t: Theme) => void): void {
