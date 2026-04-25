@@ -5,10 +5,10 @@ import { h } from '../dom';
 import { colorFor } from '../theme';
 
 export function renderHome(root: HTMLElement) {
-  let nbPlayers = 2;
+  let nbPlayers = 1;
   let modeKind = 'score' as 'time' | 'score';
   let timeSec = 180;
-  let scoreTarget = 10;
+  let scoreTarget = 50;
   let duumOn = true;
   // TS narrowing helpers : éviter "comparison has no overlap" sur les `let` mutables
   // dont la valeur change uniquement dans des closures asynchrones.
