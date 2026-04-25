@@ -575,11 +575,13 @@ html {
   background: var(--bg-1);
   border-radius: var(--radius);
   border: 1px solid var(--border);
+  /* Largeur adaptée + centrage horizontal dans la grille du layout. */
+  max-width: 720px;
+  justify-self: center;
 }
 
 .input-bar input {
   flex: 1 1 0;
-  max-width: 360px;
   background: var(--bg-2);
   border: 1px solid var(--border);
   outline: none;
