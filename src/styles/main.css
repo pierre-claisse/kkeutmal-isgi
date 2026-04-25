@@ -359,8 +359,8 @@ html {
   grid-template-columns: 1fr;
   grid-template-rows: auto auto 1fr auto auto;
   gap: 16px;
-  /* Pas de marge latérale : le contenu va d'un bord à l'autre. */
-  padding: 16px 0;
+  /* Petites marges latérales et basse égales à la marge supérieure. */
+  padding: 16px;
   width: 100%;
 }
 
