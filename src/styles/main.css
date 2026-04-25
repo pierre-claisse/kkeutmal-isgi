@@ -412,8 +412,10 @@ html {
   background: var(--bg-1);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 18px 14px;
+  /* padding latérale généreuse pour laisser respirer les U cross-row */
+  padding: 18px 60px;
   max-height: 60vh;
+  overflow-x: hidden;
   overflow-y: auto;
   scroll-behavior: smooth;
 }
@@ -427,6 +429,8 @@ html {
   inset: 0;
   pointer-events: none;
   z-index: 0;
+  /* Les paths peuvent déborder dans la padding du conteneur. */
+  overflow: visible;
 }
 
 .pebble-rows {

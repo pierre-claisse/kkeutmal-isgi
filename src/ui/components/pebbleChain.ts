@@ -189,11 +189,10 @@ function drawPaths(
       // Même rang : segment droit
       d = `M ${x1},${y1} L ${x2},${y2}`;
     } else {
-      // Cross-row : U couché (semi-cercle approximé) du bon côté.
-      // Control points strictement horizontaux → entrée et sortie à 90°
-      // sur le bord du pebble, bombement proportionnel à la chute verticale.
+      // Cross-row : U couché spacieux (control points horizontaux loin pour
+      // une boucle large et détendue).
       const side = dirA;
-      const bow = Math.min(60, Math.max(28, Math.abs(y2 - y1) * 0.5));
+      const bow = Math.max(55, Math.abs(y2 - y1));
       d = `M ${x1},${y1} C ${x1 + side * bow},${y1} ${x2 + side * bow},${y2} ${x2},${y2}`;
     }
 
