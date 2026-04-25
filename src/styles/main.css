@@ -681,12 +681,6 @@ html {
   border-color: var(--accent);
 }
 
-.kb-wrap {
-  max-width: 720px;
-  justify-self: center;
-  width: 100%;
-}
-
 .hangul-keyboard {
   background: var(--bg-1);
   border: 1px solid var(--border);
@@ -696,6 +690,10 @@ html {
   flex-direction: column;
   gap: 6px;
   user-select: none;
+  /* Largeur strictement adaptée aux touches, panel centré horizontalement. */
+  width: fit-content;
+  max-width: 100%;
+  margin-inline: auto;
 }
 
 .hk-row {
