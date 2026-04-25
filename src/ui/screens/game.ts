@@ -154,7 +154,7 @@ export function renderGame(root: HTMLElement) {
         ),
       ),
     ),
-    s.mode.kind === 'time' ? renderTimer(s.remainingMs ?? 0) : null,
+    s.mode.kind === 'time' ? mountTimer(s.remainingMs ?? 0) : null,
   );
 
   // Chaîne de mots (scrollable)
@@ -228,13 +228,26 @@ export function renderGame(root: HTMLElement) {
   }
 }
 
-function renderTimer(ms: number): HTMLElement {
+function setTimerText(el: HTMLElement, ms: number) {
   const totalSec = Math.ceil(ms / 1000);
   const m = Math.floor(totalSec / 60);
   const sec = totalSec % 60;
-  return h(
-    'div',
-    { class: 'timer', 'aria-label': '남은 시간' },
-    `${m}:${sec.toString().padStart(2, '0')}`,
-  );
+  el.textContent = `${m}:${sec.toString().padStart(2, '0')}`;
+}
+
+/**
+ * Crée le DOM du timer et démarre une boucle locale qui rafraîchit son
+ * texte sans toucher au reste de l'écran. La boucle s'arrête d'elle-même
+ * quand l'élément est retiré du DOM (changement d'écran).
+ */
+function mountTimer(initialMs: number): HTMLElement {
+  const el = h('div', { class: 'timer', 'aria-label': '남은 시간' });
+  setTimerText(el, initialMs);
+  const loop = () => {
+    if (!el.isConnected) return;
+    setTimerText(el, store.state.remainingMs ?? 0);
+    setTimeout(loop, 250);
+  };
+  setTimeout(loop, 250);
+  return el;
 }

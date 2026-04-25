@@ -206,7 +206,12 @@ class Store extends EventTarget {
     this.emit();
   }
 
-  /** Tick d'horloge en mode temps (appelé via requestAnimationFrame). */
+  /** Tick d'horloge en mode temps (appelé via requestAnimationFrame).
+   *  Ne dispatch PAS 'change' à chaque frame (sinon l'écran se re-rendrait
+   *  60×/sec et perdrait tout état local : focus input, clavier ouvert,
+   *  composer en cours). Le timer DOM est rafraîchi indépendamment via
+   *  un poll local depuis l'écran de jeu. Seul le passage en fin de
+   *  partie (timer expiré) déclenche un re-render. */
   tick(deltaMs: number) {
     if (this.s.phase !== 'playing') return;
     if (this.s.mode.kind !== 'time' || this.s.remainingMs === null) return;
@@ -217,8 +222,8 @@ class Store extends EventTarget {
       const top = [...this.s.players].sort((a, b) => b.score - a.score);
       const tied = top.length > 1 && top[0]!.score === top[1]!.score;
       this.s.winnerId = tied ? -1 : top[0]?.id ?? null;
+      this.emit();
     }
-    this.emit();
   }
 
   private endGameByBlock() {
