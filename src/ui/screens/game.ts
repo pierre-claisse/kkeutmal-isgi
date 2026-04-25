@@ -2,7 +2,9 @@
 
 import { ERROR_MESSAGES } from '../../engine/rules';
 import { store } from '../../state/store';
+import { HangulComposer } from '../../util/hangulIme';
 import { googleTranslateUrl, naverUrl } from '../../util/naverLink';
+import { buildHangulKeyboard } from '../components/hangulKeyboard';
 import { h } from '../dom';
 import { colorFor } from '../theme';
 
@@ -47,6 +49,52 @@ export function renderGame(root: HTMLElement) {
     disabled: me.isAI,
   }) as HTMLInputElement;
 
+  // IME virtuel : pour les claviers physiques sans disposition coréenne.
+  const composer = new HangulComposer();
+  inputEl.addEventListener('input', () => {
+    // Frappe physique → on resynchronise le composer (pending vidé).
+    composer.setText(inputEl.value);
+  });
+
+  const syncFromComposer = () => {
+    inputEl.value = composer.text();
+    inputEl.focus();
+  };
+
+  let kbOpen = false;
+  const keyboardWrap = h(
+    'div',
+    { class: 'kb-wrap', hidden: true },
+    buildHangulKeyboard({
+      onJamo: (j) => {
+        composer.inputJamo(j);
+        syncFromComposer();
+      },
+      onBackspace: () => {
+        composer.backspace();
+        syncFromComposer();
+      },
+    }),
+  );
+
+  const kbToggle = h(
+    'button',
+    {
+      type: 'button',
+      class: 'btn kb-toggle',
+      disabled: me.isAI,
+      title: '한글 자판',
+      'aria-pressed': 'false',
+      onclick: () => {
+        kbOpen = !kbOpen;
+        keyboardWrap.hidden = !kbOpen;
+        kbToggle.classList.toggle('active', kbOpen);
+        kbToggle.setAttribute('aria-pressed', String(kbOpen));
+      },
+    },
+    '한',
+  );
+
   const handleSubmit = (e: Event) => {
     e.preventDefault();
     if (me.isAI) return;
@@ -54,12 +102,14 @@ export function renderGame(root: HTMLElement) {
     if (!v.trim()) return;
     submit(v);
     inputEl.value = '';
+    composer.reset();
   };
 
   const inputBar = h(
     'form',
     { class: 'input-bar', onsubmit: handleSubmit },
     inputEl,
+    kbToggle,
     h('button', { type: 'submit', class: 'btn primary', disabled: me.isAI }, '제출'),
     h(
       'button',
@@ -72,6 +122,7 @@ export function renderGame(root: HTMLElement) {
           const r = store.autoFind();
           if (!r.played) errBox.textContent = '가능한 단어가 없습니다.';
           inputEl.value = '';
+          composer.reset();
         },
       },
       '자동 찾기',
@@ -160,6 +211,7 @@ export function renderGame(root: HTMLElement) {
     hanbangBanner,
     chainList,
     errBox,
+    keyboardWrap,
     inputBar,
   );
 

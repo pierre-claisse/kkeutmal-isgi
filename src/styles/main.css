@@ -607,6 +607,81 @@ html {
   letter-spacing: 0.06em;
 }
 
+/* ==================== HANGUL VIRTUAL KEYBOARD ==================== */
+
+.kb-toggle {
+  font-family: var(--font-display);
+  font-weight: 700;
+  min-width: 44px;
+  padding-left: 12px;
+  padding-right: 12px;
+}
+
+.kb-toggle.active {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.hangul-keyboard {
+  background: var(--bg-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  user-select: none;
+}
+
+.hk-row {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+}
+
+.hk-row.hk-util {
+  margin-top: 2px;
+}
+
+.hk-key {
+  flex: 1 1 0;
+  min-width: 32px;
+  max-width: 56px;
+  height: 44px;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--fg);
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 1.15rem;
+  cursor: pointer;
+  transition: background 0.1s, border-color 0.1s;
+}
+
+.hk-key:hover:not(:disabled) {
+  background: var(--bg-1);
+  border-color: var(--border-strong);
+}
+
+.hk-key:active {
+  filter: brightness(0.92);
+}
+
+.hk-util-key {
+  flex: 0 0 auto;
+  max-width: none;
+  min-width: 80px;
+  font-size: 1.05rem;
+}
+
+.hk-shift.active {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
 /* ==================== END ==================== */
 
 .end-screen {
