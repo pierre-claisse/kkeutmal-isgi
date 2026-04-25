@@ -186,13 +186,15 @@ function drawPaths(
 
     let d: string;
     if (rA === rB) {
-      // Même rang : beau U franc (control points strictement verticaux,
-      // bow constant → smile uniforme entre tous les pebbles).
-      const bow = 26;
-      d = `M ${x1},${y1} C ${x1},${y1 + bow} ${x2},${y2 + bow} ${x2},${y2}`;
-    } else {
-      // Cross-row : trait droit, point.
+      // Même rang : segment droit
       d = `M ${x1},${y1} L ${x2},${y2}`;
+    } else {
+      // Cross-row : U couché (semi-cercle approximé) du bon côté.
+      // Control points strictement horizontaux → entrée et sortie à 90°
+      // sur le bord du pebble, bombement proportionnel à la chute verticale.
+      const side = dirA;
+      const bow = Math.min(60, Math.max(28, Math.abs(y2 - y1) * 0.5));
+      d = `M ${x1},${y1} C ${x1 + side * bow},${y1} ${x2 + side * bow},${y2} ${x2},${y2}`;
     }
 
     const path = document.createElementNS(SVG_NS, 'path');
