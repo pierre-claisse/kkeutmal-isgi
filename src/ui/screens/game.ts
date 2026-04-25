@@ -157,21 +157,20 @@ export function renderGame(root: HTMLElement) {
     s.mode.kind === 'time' ? mountTimer(s.remainingMs ?? 0) : null,
   );
 
-  // Chaîne de mots — pierres reliées par courbes organiques.
-  // Reverse : le mot le plus récent doit apparaître en haut à gauche,
-  // l'ordre chronologique du jeu se lit donc du présent vers le passé.
-  const pebbles: PebbleData[] = s.chain
-    .map((m, i) => ({
-      word: m.word,
-      color:
-        m.playerId < 0
-          ? 'var(--fg-mute)'
-          : colorFor(s.players.findIndex((p) => p.id === m.playerId)),
-      auto: m.auto,
-      isHanbang: m.isHanbang,
-      index: i + 1,
-    }))
-    .reverse();
+  // Chaîne de mots — pierres reliées par courbes organiques (ordre
+  // chronologique : premier mot en haut, dernier en bas). Le scroll-to-
+  // bottom est déclenché en interne par le composant, avant le premier
+  // paint, pour éviter le flash/jump visible.
+  const pebbles: PebbleData[] = s.chain.map((m, i) => ({
+    word: m.word,
+    color:
+      m.playerId < 0
+        ? 'var(--fg-mute)'
+        : colorFor(s.players.findIndex((p) => p.id === m.playerId)),
+    auto: m.auto,
+    isHanbang: m.isHanbang,
+    index: i + 1,
+  }));
   const chainList = buildPebbleChain(pebbles);
 
   const layout = h(

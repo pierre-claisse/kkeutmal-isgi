@@ -40,12 +40,20 @@ export function buildPebbleChain(items: readonly PebbleData[]): HTMLElement {
   // Construire toutes les pebbles (réutilisées entre re-layouts).
   const pebbleEls = items.map((item) => buildPebble(item));
 
+  let firstLayout = true;
   const layout = () => {
     binPackIntoRows(wrap, rowsContainer, pebbleEls);
     drawPaths(stage, rowsContainer, svg, items);
+    if (firstLayout) {
+      // Avant le premier paint, on positionne le scroll en bas. Évite
+      // le flash où le DOM apparaît en haut puis « saute » à la fin.
+      wrap.scrollTop = wrap.scrollHeight;
+      firstLayout = false;
+    }
   };
 
-  // Recalcule sur tout changement de taille du conteneur.
+  // Recalcule sur tout changement de taille du conteneur (sans toucher
+  // au scroll : l'utilisateur peut remonter pour relire l'historique).
   const ro = new ResizeObserver(layout);
   ro.observe(wrap);
 
