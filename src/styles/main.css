@@ -359,9 +359,9 @@ html {
   grid-template-columns: 1fr;
   grid-template-rows: auto auto 1fr auto auto;
   gap: 16px;
-  padding: 20px;
-  width: min(1100px, 100%);
-  margin: 0 auto;
+  /* Pas de marge latérale : le contenu va d'un bord à l'autre. */
+  padding: 16px 0;
+  width: 100%;
 }
 
 .game-header {
@@ -578,7 +578,8 @@ html {
 }
 
 .input-bar input {
-  flex: 1;
+  flex: 1 1 0;
+  max-width: 360px;
   background: var(--bg-2);
   border: 1px solid var(--border);
   outline: none;
