@@ -453,8 +453,10 @@ html {
   background: var(--bg-1);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  /* padding latérale généreuse pour laisser respirer les U cross-row */
-  padding: 18px 60px;
+  /* Padding interne généreux : les U cross-row peuvent bomber jusqu'à
+     ≈ 80 px de chaque côté, le padding doit l'absorber sans frôler le
+     bord. Vertical un poil plus aéré aussi. */
+  padding: 24px 90px;
   /* Remplit toute la hauteur disponible jusqu'à l'input fixe (via le
      padding-bottom du layout). flex/min-height pour permettre le scroll
      interne quand le contenu déborde. */
