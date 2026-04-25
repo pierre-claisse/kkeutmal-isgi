@@ -366,8 +366,8 @@ html {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  /* Petites marges latérales et basse égales à la marge supérieure. */
-  padding: 16px;
+  /* Padding-bottom large pour réserver la place de l'input fixe en bas. */
+  padding: 16px 16px calc(env(safe-area-inset-bottom) + 102px);
   width: 100%;
 }
 
@@ -582,10 +582,15 @@ html {
   background: var(--bg-1);
   border-radius: var(--radius);
   border: 1px solid var(--border);
-  /* Largeur adaptée + centrage horizontal dans le flex column du layout. */
+  /* Toujours ancré en bas du viewport, indépendant de la hauteur de
+     la chaîne. Centré horizontalement avec max-width. */
+  position: fixed;
+  bottom: calc(env(safe-area-inset-bottom) + 16px);
+  left: 16px;
+  right: 16px;
+  margin-inline: auto;
   max-width: 720px;
-  align-self: center;
-  width: 100%;
+  z-index: 40;
 }
 
 .input-bar input {
@@ -694,10 +699,11 @@ html {
   border-color: var(--accent);
 }
 
-/* Wrap fixe par-dessus le reste : ne perturbe pas le flow de layout. */
+/* Wrap fixe juste au-dessus de l'input (qui mesure ~70 px + 16 padding
+   + 16 gap = 102 px depuis le bas, plus safe-area). */
 .kb-wrap {
   position: fixed;
-  bottom: calc(env(safe-area-inset-bottom) + 16px);
+  bottom: calc(env(safe-area-inset-bottom) + 102px);
   left: 0;
   right: 0;
   z-index: 50;
