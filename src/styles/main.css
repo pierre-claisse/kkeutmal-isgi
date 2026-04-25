@@ -27,6 +27,12 @@
   box-sizing: border-box;
 }
 
+/* L'attribut [hidden] doit toujours masquer, même si une règle .row { display: flex }
+   a la même spécificité que [hidden] et l'emporte sur le user-agent stylesheet. */
+[hidden] {
+  display: none !important;
+}
+
 html,
 body {
   margin: 0;
