@@ -25,6 +25,9 @@
   --scroll-thumb: rgba(236, 229, 211, 0.22);
   --scroll-thumb-hover: var(--accent);
 
+  /* Surface translucide pour le clavier flottant. */
+  --kb-bg: rgba(12, 12, 12, 0.7);
+
   /* Player palette (단청 inspirée — fonctionne sur les deux thèmes) */
   --p1: #2c5d8f;       /* 청 indigo */
   --p2: #b8362b;       /* 적 rouge */
@@ -51,6 +54,9 @@
   --scroll-track: rgba(31, 26, 20, 0.05);
   --scroll-thumb: rgba(31, 26, 20, 0.22);
   --scroll-thumb-hover: var(--accent);
+
+  /* Surface translucide pour le clavier flottant. */
+  --kb-bg: rgba(239, 231, 207, 0.78);
 
   /* Player palette identique : couleurs 단청 lisibles sur les deux fonds */
   --p1: #1f4e8a;
@@ -357,9 +363,8 @@ html {
 
 .layout {
   flex: 1;
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: auto auto 1fr auto auto;
+  display: flex;
+  flex-direction: column;
   gap: 16px;
   /* Petites marges latérales et basse égales à la marge supérieure. */
   padding: 16px;
@@ -577,9 +582,10 @@ html {
   background: var(--bg-1);
   border-radius: var(--radius);
   border: 1px solid var(--border);
-  /* Largeur adaptée + centrage horizontal dans la grille du layout. */
+  /* Largeur adaptée + centrage horizontal dans le flex column du layout. */
   max-width: 720px;
-  justify-self: center;
+  align-self: center;
+  width: 100%;
 }
 
 .input-bar input {
@@ -641,12 +647,17 @@ html {
 }
 
 .err {
-  min-height: 1.4em;
   color: var(--danger);
   font-family: var(--font-body);
   font-weight: 600;
   font-size: 0.95rem;
   text-align: center;
+}
+
+/* Quand vide, on retire complètement l'élément du flow → pas de gap
+   parasite entre la chaîne et l'input. */
+.err:empty {
+  display: none;
 }
 
 .hanbang-banner {
@@ -683,19 +694,38 @@ html {
   border-color: var(--accent);
 }
 
+/* Wrap fixe par-dessus le reste : ne perturbe pas le flow de layout. */
+.kb-wrap {
+  position: fixed;
+  bottom: calc(env(safe-area-inset-bottom) + 16px);
+  left: 0;
+  right: 0;
+  z-index: 50;
+  display: flex;
+  justify-content: center;
+  /* Le wrap couvre toute la largeur mais laisse passer les clics ;
+     seul le panel keyboard intercepte le pointeur. */
+  pointer-events: none;
+}
+
+.kb-wrap > * {
+  pointer-events: auto;
+}
+
 .hangul-keyboard {
-  background: var(--bg-1);
-  border: 1px solid var(--border);
+  background: var(--kb-bg, var(--bg-1));
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--border-strong);
   border-radius: var(--radius);
   padding: 8px;
   display: flex;
   flex-direction: column;
   gap: 6px;
   user-select: none;
-  /* Largeur strictement adaptée aux touches, panel centré horizontalement. */
+  /* Largeur strictement adaptée aux touches. */
   width: fit-content;
-  max-width: 100%;
-  margin-inline: auto;
+  max-width: calc(100% - 32px);
 }
 
 .hk-row {
