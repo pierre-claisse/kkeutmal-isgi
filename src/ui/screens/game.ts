@@ -8,6 +8,10 @@ import { buildPebbleChain, type PebbleData } from '../components/pebbleChain';
 import { h } from '../dom';
 import { colorFor } from '../theme';
 
+// État UI persistant entre re-renders : une fois le clavier virtuel
+// ouvert par l'utilisateur, il reste ouvert tant qu'il ne le ferme pas.
+let kbOpen = false;
+
 export function renderGame(root: HTMLElement) {
   const s = store.state;
   const me = s.players[s.currentPlayerIdx]!;
@@ -61,10 +65,9 @@ export function renderGame(root: HTMLElement) {
     inputEl.focus();
   };
 
-  let kbOpen = false;
   const keyboardWrap = h(
     'div',
-    { class: 'kb-wrap', hidden: true },
+    { class: 'kb-wrap', hidden: !kbOpen },
     buildHangulKeyboard({
       onJamo: (j) => {
         composer.inputJamo(j);
@@ -81,10 +84,10 @@ export function renderGame(root: HTMLElement) {
     'button',
     {
       type: 'button',
-      class: 'btn kb-toggle',
+      class: `btn kb-toggle${kbOpen ? ' active' : ''}`,
       disabled: me.isAI,
       title: '한글 자판',
-      'aria-pressed': 'false',
+      'aria-pressed': String(kbOpen),
       onclick: () => {
         kbOpen = !kbOpen;
         keyboardWrap.hidden = !kbOpen;
