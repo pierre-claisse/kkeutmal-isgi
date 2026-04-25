@@ -18,15 +18,6 @@ export function renderGame(root: HTMLElement) {
   const prev = s.chain[s.chain.length - 1];
 
   const errBox = h('div', { class: 'err', role: 'alert' });
-  const hanbangBanner = h(
-    'div',
-    {
-      class: 'hanbang-banner',
-      hidden: !s.freeNextTurn || s.chain.length === 0,
-    },
-    h('span', { class: 'hanbang-pulse' }, '한방단어!'),
-    h('span', {}, '다음 차례는 자유 선택입니다.'),
-  );
 
   const submit = (raw: string) => {
     if (me.isAI) return;
@@ -179,7 +170,6 @@ export function renderGame(root: HTMLElement) {
     'div',
     { class: 'layout' },
     header,
-    hanbangBanner,
     chainList,
     errBox,
     keyboardWrap,

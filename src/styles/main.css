@@ -366,8 +366,10 @@ html {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  /* Padding-bottom large pour réserver la place de l'input fixe en bas. */
-  padding: 16px 16px calc(env(safe-area-inset-bottom) + 102px);
+  /* Padding-bottom = safe-area + input-bar height + 16 px (= même écart
+     qu'entre header et chaîne) → la zone vide entre chaîne et input
+     est égale à celle entre joueurs et chaîne. */
+  padding: 16px 16px calc(env(safe-area-inset-bottom) + 104px);
   width: 100%;
 }
 
@@ -671,23 +673,6 @@ html {
   display: none;
 }
 
-.hanbang-banner {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 14px;
-  border-radius: var(--radius);
-  background: var(--danger-soft);
-  border: 1px solid var(--danger);
-  color: var(--danger);
-  font-family: var(--font-display);
-  font-weight: 700;
-}
-
-.hanbang-pulse {
-  font-weight: 700;
-  letter-spacing: 0.06em;
-}
 
 /* ==================== HANGUL VIRTUAL KEYBOARD ==================== */
 
@@ -705,11 +690,10 @@ html {
   border-color: var(--accent);
 }
 
-/* Wrap fixe juste au-dessus de l'input (qui mesure ~70 px + 16 padding
-   + 16 gap = 102 px depuis le bas, plus safe-area). */
+/* Wrap fixe juste au-dessus de l'input (avec 16 px d'écart). */
 .kb-wrap {
   position: fixed;
-  bottom: calc(env(safe-area-inset-bottom) + 102px);
+  bottom: calc(env(safe-area-inset-bottom) + 104px);
   left: 0;
   right: 0;
   z-index: 50;
