@@ -136,16 +136,6 @@ html {
   margin: 0;
   text-align: center;
   letter-spacing: 0.02em;
-  position: relative;
-}
-
-.title::after {
-  content: '';
-  display: block;
-  width: 60px;
-  height: 1px;
-  background: var(--accent);
-  margin: 12px auto 0;
 }
 
 .subtitle {
