@@ -439,13 +439,6 @@ html {
   color: var(--c, var(--fg));
 }
 
-.timer {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 2rem;
-  letter-spacing: 0.04em;
-  color: var(--accent);
-}
 
 .pebble-chain {
   background: var(--bg-1);
@@ -829,9 +822,6 @@ html {
   .scores {
     width: 100%;
     justify-content: space-between;
-  }
-  .timer {
-    font-size: 1.6rem;
   }
   .pebble-chain {
     max-height: none;

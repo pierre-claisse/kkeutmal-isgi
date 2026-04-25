@@ -5,10 +5,6 @@ import { getDict } from '../dict/dict';
 import { isHanbang, validateMove, type ValidationResult } from '../engine/rules';
 import { colorFor } from '../ui/theme';
 
-export type Mode =
-  | { kind: 'time'; seconds: number }
-  | { kind: 'score'; target: number };
-
 interface Player {
   id: number; // 0..5 (jusqu'à 6 joueurs ; 6e slot = IA en mode 1 joueur)
   name: string;
@@ -32,17 +28,15 @@ interface GameState {
   chain: Move[];
   usedWords: Set<string>;
   duumOn: boolean;
-  mode: Mode;
+  scoreTarget: number;
   freeNextTurn: boolean;
-  startedAt: number | null;
-  remainingMs: number | null;
   winnerId: number | null;
 }
 
 interface StartConfig {
   playerNames: string[]; // 1..6 ; en mode 1 joueur, l'IA est ajoutée d'office
   duumOn: boolean;
-  mode: Mode;
+  scoreTarget: number;
 }
 
 const initial = (): GameState => ({
@@ -52,10 +46,8 @@ const initial = (): GameState => ({
   chain: [],
   usedWords: new Set(),
   duumOn: true,
-  mode: { kind: 'score', target: 10 },
+  scoreTarget: 50,
   freeNextTurn: false,
-  startedAt: null,
-  remainingMs: null,
   winnerId: null,
 });
 
@@ -114,10 +106,8 @@ class Store extends EventTarget {
       chain,
       usedWords: used,
       duumOn: cfg.duumOn,
-      mode: cfg.mode,
+      scoreTarget: cfg.scoreTarget,
       freeNextTurn: chain[0]?.isHanbang ?? true,
-      startedAt: Date.now(),
-      remainingMs: cfg.mode.kind === 'time' ? cfg.mode.seconds * 1000 : null,
       winnerId: null,
     };
     this.emit();
@@ -190,8 +180,8 @@ class Store extends EventTarget {
     this.s.usedWords.add(word);
     this.s.freeNextTurn = isHb;
 
-    // Vérifier conditions de fin
-    if (this.s.mode.kind === 'score' && player.score >= this.s.mode.target) {
+    // Cible de score atteinte → fin de partie.
+    if (player.score >= this.s.scoreTarget) {
       this.s.phase = 'end';
       this.s.winnerId = player.id;
       this.emit();
@@ -201,26 +191,6 @@ class Store extends EventTarget {
     // Passer au joueur suivant
     this.s.currentPlayerIdx = (this.s.currentPlayerIdx + 1) % this.s.players.length;
     this.emit();
-  }
-
-  /** Tick d'horloge en mode temps (appelé via requestAnimationFrame).
-   *  Ne dispatch PAS 'change' à chaque frame (sinon l'écran se re-rendrait
-   *  60×/sec et perdrait tout état local : focus input, clavier ouvert,
-   *  composer en cours). Le timer DOM est rafraîchi indépendamment via
-   *  un poll local depuis l'écran de jeu. Seul le passage en fin de
-   *  partie (timer expiré) déclenche un re-render. */
-  tick(deltaMs: number) {
-    if (this.s.phase !== 'playing') return;
-    if (this.s.mode.kind !== 'time' || this.s.remainingMs === null) return;
-    this.s.remainingMs = Math.max(0, this.s.remainingMs - deltaMs);
-    if (this.s.remainingMs <= 0) {
-      this.s.phase = 'end';
-      // En mode temps, gagnant = score max ; égalité possible (winnerId=-1 => égalité).
-      const top = [...this.s.players].sort((a, b) => b.score - a.score);
-      const tied = top.length > 1 && top[0]!.score === top[1]!.score;
-      this.s.winnerId = tied ? -1 : top[0]?.id ?? null;
-      this.emit();
-    }
   }
 
   private endGameByBlock() {

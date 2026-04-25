@@ -1,18 +1,13 @@
 // Écran d'accueil : configuration de la partie.
 
-import { store, type Mode } from '../../state/store';
+import { store } from '../../state/store';
 import { h } from '../dom';
 import { colorFor } from '../theme';
 
 export function renderHome(root: HTMLElement) {
   let nbPlayers = 1;
-  let modeKind = 'score' as 'time' | 'score';
-  let timeSec = 180;
   let scoreTarget = 50;
   let duumOn = true;
-  // TS narrowing helpers : éviter "comparison has no overlap" sur les `let` mutables
-  // dont la valeur change uniquement dans des closures asynchrones.
-  const isTime = () => modeKind === 'time';
 
   const playersGrid = h('div', { class: 'players-grid' });
   const buildPlayersInputs = () => {
@@ -36,50 +31,6 @@ export function renderHome(root: HTMLElement) {
   };
   buildPlayersInputs();
 
-  // Clamp à la perte de focus / Enter, et reflète la valeur clampée à l'écran.
-  // (HTML5 min/max ne bloque pas la saisie manuelle hors bornes.)
-  const clampInput = (el: HTMLInputElement, lo: number, hi: number): number => {
-    const v = clamp(Number(el.value), lo, hi);
-    el.value = String(v);
-    return v;
-  };
-
-  const timeWrap = h(
-    'label',
-    { class: 'row mode-value', hidden: !isTime() },
-    h('span', {}, '시간 (초, 60–3600)'),
-    h('input', {
-      type: 'number',
-      min: 60,
-      max: 3600,
-      value: timeSec,
-      step: 10,
-      onchange: (e: Event) => {
-        timeSec = clampInput(e.target as HTMLInputElement, 60, 3600);
-      },
-    }),
-  );
-  const scoreWrap = h(
-    'label',
-    { class: 'row mode-value', hidden: isTime() },
-    h('span', {}, '목표 점수 (10–1000)'),
-    h('input', {
-      type: 'number',
-      min: 10,
-      max: 1000,
-      value: scoreTarget,
-      step: 1,
-      onchange: (e: Event) => {
-        scoreTarget = clampInput(e.target as HTMLInputElement, 10, 1000);
-      },
-    }),
-  );
-
-  const updateModeUI = () => {
-    timeWrap.hidden = !isTime();
-    scoreWrap.hidden = isTime();
-  };
-
   const form = h(
     'form',
     {
@@ -91,10 +42,11 @@ export function renderHome(root: HTMLElement) {
         for (let i = 0; i < nbPlayers; i++) {
           names.push(String(fd.get(`player-${i}`) ?? '').trim());
         }
-        const mode: Mode = isTime()
-          ? { kind: 'time', seconds: clamp(timeSec, 60, 3600) }
-          : { kind: 'score', target: clamp(scoreTarget, 10, 1000) };
-        store.startGame({ playerNames: names, duumOn, mode });
+        store.startGame({
+          playerNames: names,
+          duumOn,
+          scoreTarget: clamp(scoreTarget, 10, 1000),
+        });
       },
     },
     h('h1', { class: 'title' }, '끝말잇기'),
@@ -130,43 +82,25 @@ export function renderHome(root: HTMLElement) {
     h(
       'fieldset',
       { class: 'card' },
-      h('legend', {}, '게임 모드'),
+      h('legend', {}, '목표 점수'),
       h(
-        'div',
-        { class: 'row radios' },
-        h(
-          'label',
-          { class: 'pill' },
-          h('input', {
-            type: 'radio',
-            name: 'mode',
-            value: 'score',
-            checked: modeKind === 'score',
-            onchange: () => {
-              modeKind = 'score';
-              updateModeUI();
-            },
-          }),
-          h('span', {}, '목표 점수'),
-        ),
-        h(
-          'label',
-          { class: 'pill' },
-          h('input', {
-            type: 'radio',
-            name: 'mode',
-            value: 'time',
-            checked: modeKind === 'time',
-            onchange: () => {
-              modeKind = 'time';
-              updateModeUI();
-            },
-          }),
-          h('span', {}, '제한 시간'),
-        ),
+        'label',
+        { class: 'row mode-value' },
+        h('span', {}, '점수 (10–1000)'),
+        h('input', {
+          type: 'number',
+          min: 10,
+          max: 1000,
+          value: scoreTarget,
+          step: 1,
+          // Clamp au blur (HTML5 min/max ne bloque pas la saisie manuelle).
+          onchange: (e: Event) => {
+            const el = e.target as HTMLInputElement;
+            scoreTarget = clamp(Number(el.value), 10, 1000);
+            el.value = String(scoreTarget);
+          },
+        }),
       ),
-      scoreWrap,
-      timeWrap,
     ),
 
     h(
