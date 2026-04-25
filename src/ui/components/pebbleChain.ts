@@ -186,17 +186,21 @@ function drawPaths(
 
     let d: string;
     if (rA === rB) {
-      // Même rang : arc horizontal léger (alternance haut/bas pour rythme).
+      // Même rang : S horizontal harmonieux (control points sur côtés opposés
+      // de la ligne pour produire une vraie ondulation, pas un pic).
       const dx = x2 - x1;
       const direction = dx >= 0 ? 1 : -1;
-      const co = Math.max(18, Math.min(70, Math.abs(dx) * 0.5));
-      const bend = i % 2 === 0 ? -9 : 9;
-      d = `M ${x1},${y1} C ${x1 + direction * co},${y1 + bend} ${x2 - direction * co},${y2 + bend} ${x2},${y2}`;
+      const co = Math.max(24, Math.min(80, Math.abs(dx) * 0.55));
+      const bend = 6;
+      d = `M ${x1},${y1} C ${x1 + direction * co},${y1 + bend} ${x2 - direction * co},${y2 - bend} ${x2},${y2}`;
     } else {
-      // Cross-row : arc en U vertical du bon côté du conteneur.
-      const side = dirA; // bombe à droite si on sort à droite, à gauche sinon.
-      const offset = 28;
-      d = `M ${x1},${y1} C ${x1 + side * offset},${y1 + 8} ${x2 + side * offset},${y2 - 8} ${x2},${y2}`;
+      // Cross-row : grand arc qui « respire » sur le côté du conteneur.
+      // Control points purement horizontaux à grande distance → boucle douce
+      // proportionnelle à la chute verticale.
+      const side = dirA;
+      const dy = y2 - y1;
+      const offset = Math.max(50, dy * 0.65);
+      d = `M ${x1},${y1} C ${x1 + side * offset},${y1} ${x2 + side * offset},${y2} ${x2},${y2}`;
     }
 
     const path = document.createElementNS(SVG_NS, 'path');
