@@ -97,7 +97,7 @@ export function renderHome(root: HTMLElement) {
         store.startGame({ playerNames: names, duumOn, mode });
       },
     },
-    h('h1', { class: 'title neon' }, '끝말잇기'),
+    h('h1', { class: 'title' }, '끝말잇기'),
     h('p', { class: 'subtitle' }, 'Word Chain — Korean'),
 
     h(
@@ -193,7 +193,7 @@ export function renderHome(root: HTMLElement) {
       ),
     ),
 
-    h('button', { type: 'submit', class: 'cta neon' }, '시작'),
+    h('button', { type: 'submit', class: 'cta' }, '시작'),
   );
 
   root.appendChild(form);

@@ -17,7 +17,7 @@ export function renderEnd(root: HTMLElement) {
   const screen = h(
     'div',
     { class: 'end-screen' },
-    h('h1', { class: 'title neon' }, title),
+    h('h1', { class: 'title' }, title),
     h(
       'ol',
       { class: 'podium' },
@@ -40,7 +40,7 @@ export function renderEnd(root: HTMLElement) {
       h(
         'button',
         {
-          class: 'cta neon',
+          class: 'cta',
           onclick: () => store.reset(),
         },
         '다시 하기',

@@ -84,7 +84,7 @@ export function renderGame(root: HTMLElement) {
     { class: 'game-header' },
     h(
       'div',
-      { class: 'turn-card neon-border', style: `--c: ${me.color}` },
+      { class: 'turn-card', style: `--c: ${me.color}` },
       h('div', { class: 'turn-label' }, '현재 차례'),
       h('div', { class: 'turn-name' }, me.name + (me.isAI ? ' 🤖' : '')),
     ),
@@ -182,7 +182,7 @@ function renderTimer(ms: number): HTMLElement {
   const sec = totalSec % 60;
   return h(
     'div',
-    { class: 'timer neon', 'aria-label': '남은 시간' },
+    { class: 'timer', 'aria-label': '남은 시간' },
     `${m}:${sec.toString().padStart(2, '0')}`,
   );
 }

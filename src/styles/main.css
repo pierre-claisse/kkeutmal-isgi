@@ -1,25 +1,63 @@
-@import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@400;600;700&family=Noto+Sans+KR:wght@500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;700&family=Noto+Sans+KR:wght@400;500;700&display=swap');
+
+/* ==================== THEMES ==================== */
+/* Dark = AMOLED noir profond, accent or 황금 (sans glow néon).
+   Light = papier 한지 crème, accent indigo 남. Les deux gardent un look
+   coréen via typographie serif et palette 단청. */
+
+:root,
+[data-theme='dark'] {
+  --bg: #000000;
+  --bg-1: #0c0c0c;
+  --bg-2: #161616;
+  --fg: #ece5d3;       /* off-white teinté hanji */
+  --fg-mute: #8a8478;
+  --border: #1f1d18;
+  --border-strong: #2a2723;
+  --accent: #b8860b;   /* 황금 / ochre */
+  --accent-soft: rgba(184, 134, 11, 0.12);
+  --danger: #b8362b;   /* 적색 */
+  --danger-soft: rgba(184, 54, 43, 0.12);
+
+  /* Player palette (단청 inspirée — fonctionne sur les deux thèmes) */
+  --p1: #2c5d8f;       /* 청 indigo */
+  --p2: #b8362b;       /* 적 rouge */
+  --p3: #c8920a;       /* 황 ocre */
+  --p4: #3d7a4f;       /* 녹 vert */
+  --p5: #6f3a7e;       /* 자 violet */
+  --p6: #8c5a2b;       /* 갈 brun */
+}
+
+[data-theme='light'] {
+  --bg: #f7f1e1;       /* 한지 crème */
+  --bg-1: #efe7cf;
+  --bg-2: #e6dcbe;
+  --fg: #1f1a14;       /* encre noire chaude */
+  --fg-mute: #6a6356;
+  --border: #d8cdaf;
+  --border-strong: #b8a87f;
+  --accent: #1a4978;   /* 남 indigo profond */
+  --accent-soft: rgba(26, 73, 120, 0.1);
+  --danger: #952820;
+  --danger-soft: rgba(149, 40, 32, 0.1);
+
+  /* Player palette identique : couleurs 단청 lisibles sur les deux fonds */
+  --p1: #1f4e8a;
+  --p2: #a32d22;
+  --p3: #a37706;
+  --p4: #2f6940;
+  --p5: #5e2f6c;
+  --p6: #6f4419;
+}
 
 :root {
-  --bg: #000000;
-  --bg-1: #0a0a0a;
-  --bg-2: #141414;
-  --fg: #f0f0f0;
-  --fg-mute: #888;
-  --danger: #ff3354;
-  --p1: #00f0ff;
-  --p2: #ff2ec4;
-  --p3: #a4ff3d;
-  --p4: #ff8a1f;
-  --p5: #ffe600;
-  --p6: #b95dff;
-
-  --radius: 14px;
-  --radius-sm: 8px;
-
-  --font-display: 'Exo 2', system-ui, sans-serif;
-  --font-body: 'Noto Sans KR', 'Exo 2', system-ui, sans-serif;
+  --radius: 8px;
+  --radius-sm: 4px;
+  --font-display: 'Noto Serif KR', 'Noto Sans KR', serif;
+  --font-body: 'Noto Sans KR', system-ui, sans-serif;
 }
+
+/* ==================== RESET + BASE ==================== */
 
 *,
 *::before,
@@ -27,8 +65,6 @@
   box-sizing: border-box;
 }
 
-/* L'attribut [hidden] doit toujours masquer, même si une règle .row { display: flex }
-   a la même spécificité que [hidden] et l'emporte sur le user-agent stylesheet. */
 [hidden] {
   display: none !important;
 }
@@ -40,15 +76,20 @@ body {
   height: 100%;
 }
 
-body.amoled {
+body {
   background: var(--bg);
   color: var(--fg);
   font-family: var(--font-body);
   font-size: 16px;
-  line-height: 1.5;
+  line-height: 1.55;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   overflow-x: hidden;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+html {
+  overscroll-behavior: none;
 }
 
 #app {
@@ -59,39 +100,78 @@ body.amoled {
   flex-direction: column;
 }
 
-/* ==================== HOME ==================== */
+/* ==================== THEME SWITCHER ==================== */
 
-.home-form {
-  width: min(680px, 100%);
-  margin: 0 auto;
-  padding: 32px 20px 48px;
+.theme-switch {
+  position: fixed;
+  top: calc(env(safe-area-inset-top) + 14px);
+  right: calc(env(safe-area-inset-right) + 14px);
+  width: 40px;
+  height: 40px;
   display: flex;
-  flex-direction: column;
-  gap: 20px;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-1);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  color: var(--fg);
+  cursor: pointer;
+  font-size: 1.05rem;
+  z-index: 1000;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
 }
+
+.theme-switch:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+/* ==================== TITLE ==================== */
 
 .title {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: clamp(2.4rem, 6vw, 3.5rem);
+  font-size: clamp(2.4rem, 6vw, 3.4rem);
   margin: 0;
   text-align: center;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.02em;
+  position: relative;
+}
+
+.title::after {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 1px;
+  background: var(--accent);
+  margin: 12px auto 0;
 }
 
 .subtitle {
   text-align: center;
   color: var(--fg-mute);
-  font-family: var(--font-display);
-  letter-spacing: 0.2em;
+  font-family: var(--font-body);
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  font-size: 0.85rem;
-  margin: -8px 0 16px;
+  font-size: 0.78rem;
+  margin: -2px 0 18px;
+}
+
+/* ==================== HOME ==================== */
+
+.home-form {
+  width: min(680px, 100%);
+  margin: 0 auto;
+  padding: 36px 20px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
 }
 
 .card {
   background: var(--bg-1);
-  border: 1px solid #1a1a1a;
+  border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 16px 18px;
   display: flex;
@@ -101,12 +181,11 @@ body.amoled {
 
 .card legend {
   font-family: var(--font-display);
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  font-size: 0.78rem;
-  color: var(--fg-mute);
-  padding: 0 6px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  font-size: 0.95rem;
+  color: var(--fg);
+  padding: 0 8px;
 }
 
 .row {
@@ -122,9 +201,9 @@ body.amoled {
 }
 
 .row.toggle input[type='checkbox'] {
-  width: 18px;
-  height: 18px;
-  accent-color: var(--p1);
+  width: 17px;
+  height: 17px;
+  accent-color: var(--accent);
 }
 
 .radios {
@@ -139,13 +218,14 @@ body.amoled {
   justify-content: center;
   padding: 8px 16px;
   min-width: 56px;
-  border-radius: 999px;
+  border-radius: var(--radius);
   background: var(--bg-2);
-  border: 1px solid #222;
+  border: 1px solid var(--border);
   cursor: pointer;
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-weight: 600;
-  transition: all 0.15s ease;
+  color: var(--fg);
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
 }
 
 .pill input {
@@ -156,14 +236,13 @@ body.amoled {
 }
 
 .pill:has(input:checked) {
-  background: rgba(0, 240, 255, 0.08);
-  border-color: var(--p1);
-  color: var(--p1);
-  box-shadow: 0 0 8px rgba(0, 240, 255, 0.4) inset, 0 0 12px rgba(0, 240, 255, 0.3);
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 .pill:hover {
-  border-color: #444;
+  border-color: var(--border-strong);
 }
 
 .players-grid {
@@ -177,8 +256,8 @@ body.amoled {
   align-items: center;
   gap: 10px;
   background: var(--bg-2);
-  border: 1px solid #1c1c1c;
-  border-left: 3px solid var(--c, var(--p1));
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--c, var(--accent));
   border-radius: var(--radius-sm);
   padding: 8px 10px;
 }
@@ -196,7 +275,7 @@ body.amoled {
 .player-tag {
   font-family: var(--font-display);
   font-weight: 700;
-  color: var(--c, var(--p1));
+  color: var(--c, var(--accent));
   width: 28px;
   text-align: center;
 }
@@ -211,13 +290,18 @@ body.amoled {
 .mode-value input[type='number'] {
   width: 110px;
   background: var(--bg-2);
-  border: 1px solid #222;
+  border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   color: var(--fg);
   padding: 8px 10px;
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-weight: 600;
   font-size: 1rem;
+}
+
+.mode-value input[type='number']:focus {
+  outline: none;
+  border-color: var(--accent);
 }
 
 .hint {
@@ -229,20 +313,19 @@ body.amoled {
 .cta {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 1.1rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
+  font-size: 1.05rem;
+  letter-spacing: 0.06em;
   padding: 14px 24px;
-  background: transparent;
-  border: 2px solid var(--p1);
-  color: var(--p1);
+  background: var(--accent);
+  border: 1px solid var(--accent);
+  color: var(--bg);
   border-radius: var(--radius);
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: filter 0.15s ease, transform 0.05s ease;
 }
 
 .cta:hover {
-  background: rgba(0, 240, 255, 0.08);
+  filter: brightness(1.1);
 }
 
 .cta:active {
@@ -274,12 +357,14 @@ body.amoled {
   padding: 12px 18px;
   border-radius: var(--radius);
   background: var(--bg-1);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--c, var(--accent));
   min-width: 160px;
 }
 
 .turn-label {
-  font-family: var(--font-display);
-  font-size: 0.75rem;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--fg-mute);
@@ -289,7 +374,7 @@ body.amoled {
   font-family: var(--font-display);
   font-weight: 700;
   font-size: 1.5rem;
-  color: var(--c, var(--p1));
+  color: var(--c, var(--fg));
 }
 
 .scores {
@@ -305,23 +390,23 @@ body.amoled {
   padding: 8px 12px;
   border-radius: var(--radius-sm);
   background: var(--bg-1);
-  border: 1px solid #1a1a1a;
+  border: 1px solid var(--border);
+  border-bottom: 2px solid var(--c, var(--border));
   min-width: 64px;
-  opacity: 0.6;
-  transition: opacity 0.2s;
+  opacity: 0.65;
+  transition: opacity 0.2s, border-color 0.2s;
 }
 
 .score.active {
   opacity: 1;
   border-color: var(--c);
-  box-shadow: 0 0 8px var(--c);
 }
 
 .score .name {
   font-size: 0.78rem;
   color: var(--fg-mute);
-  font-family: var(--font-display);
-  letter-spacing: 0.06em;
+  font-family: var(--font-body);
+  letter-spacing: 0.04em;
   max-width: 80px;
   white-space: nowrap;
   overflow: hidden;
@@ -339,8 +424,8 @@ body.amoled {
   font-family: var(--font-display);
   font-weight: 700;
   font-size: 2rem;
-  letter-spacing: 0.06em;
-  color: var(--p3);
+  letter-spacing: 0.04em;
+  color: var(--accent);
 }
 
 .chain-list {
@@ -349,7 +434,7 @@ body.amoled {
   padding: 12px;
   background: var(--bg-1);
   border-radius: var(--radius);
-  border: 1px solid #161616;
+  border: 1px solid var(--border);
   max-height: 60vh;
   overflow-y: auto;
   display: flex;
@@ -365,11 +450,11 @@ body.amoled {
   padding: 8px 12px;
   border-radius: var(--radius-sm);
   background: var(--bg-2);
-  border-left: 3px solid var(--c, #444);
+  border-left: 3px solid var(--c, var(--border));
 }
 
 .chain-item .idx {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-weight: 600;
   font-size: 0.75rem;
   color: var(--fg-mute);
@@ -381,12 +466,11 @@ body.amoled {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--c, #444);
-  box-shadow: 0 0 6px var(--c, transparent);
+  background: var(--c, var(--border-strong));
 }
 
 .chain-item .word {
-  font-family: var(--font-body);
+  font-family: var(--font-display);
   font-weight: 700;
   font-size: 1.15rem;
   color: var(--fg);
@@ -396,11 +480,11 @@ body.amoled {
 .chain-item .lookup {
   color: var(--fg-mute);
   text-decoration: none;
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-weight: 600;
   font-size: 0.95rem;
   padding: 2px 6px;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   transition: color 0.15s, background 0.15s;
   white-space: nowrap;
 }
@@ -411,29 +495,31 @@ body.amoled {
 }
 
 .chain-item .lookup.naver:hover {
-  color: var(--p1);
-  background: rgba(0, 240, 255, 0.08);
+  color: var(--accent);
+  background: var(--accent-soft);
 }
 
 .chain-item .lookup.gt:hover {
-  color: var(--p2);
-  background: rgba(255, 46, 196, 0.08);
+  color: var(--p1);
+  background: rgba(31, 78, 138, 0.1);
 }
 
 .chain-item .flag {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: 0.65rem;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   padding: 2px 6px;
-  border-radius: 4px;
-  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-sm);
+  background: var(--bg-1);
   color: var(--fg-mute);
+  border: 1px solid var(--border);
 }
 
 .chain-item .flag.hb {
-  background: rgba(255, 51, 84, 0.15);
+  background: var(--danger-soft);
   color: var(--danger);
+  border-color: var(--danger);
 }
 
 .input-bar {
@@ -443,13 +529,13 @@ body.amoled {
   padding: 12px;
   background: var(--bg-1);
   border-radius: var(--radius);
-  border: 1px solid #161616;
+  border: 1px solid var(--border);
 }
 
 .input-bar input {
   flex: 1;
   background: var(--bg-2);
-  border: 1px solid #222;
+  border: 1px solid var(--border);
   outline: none;
   color: var(--fg);
   padding: 12px 14px;
@@ -457,12 +543,11 @@ body.amoled {
   font-family: var(--font-body);
   font-size: 1.15rem;
   font-weight: 700;
-  transition: border-color 0.15s, box-shadow 0.15s;
+  transition: border-color 0.15s;
 }
 
 .input-bar input:focus {
-  border-color: var(--p1);
-  box-shadow: 0 0 0 1px var(--p1), 0 0 8px rgba(0, 240, 255, 0.3);
+  border-color: var(--accent);
 }
 
 .input-bar input:disabled {
@@ -470,34 +555,34 @@ body.amoled {
 }
 
 .btn {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.04em;
   padding: 12px 16px;
   border-radius: var(--radius-sm);
-  border: 1px solid #222;
+  border: 1px solid var(--border);
   background: var(--bg-2);
   color: var(--fg);
   cursor: pointer;
-  transition: all 0.15s;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
 }
 
 .btn:hover:not(:disabled) {
-  border-color: #444;
+  border-color: var(--border-strong);
 }
 
 .btn.primary {
-  background: rgba(0, 240, 255, 0.08);
-  border-color: var(--p1);
-  color: var(--p1);
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--bg);
 }
 
 .btn.primary:hover:not(:disabled) {
-  background: rgba(0, 240, 255, 0.16);
+  filter: brightness(1.1);
 }
 
 .btn.secondary {
-  border-color: #333;
+  border-color: var(--border-strong);
 }
 
 .btn:disabled {
@@ -508,7 +593,7 @@ body.amoled {
 .err {
   min-height: 1.4em;
   color: var(--danger);
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-weight: 600;
   font-size: 0.95rem;
   text-align: center;
@@ -520,22 +605,16 @@ body.amoled {
   gap: 12px;
   padding: 10px 14px;
   border-radius: var(--radius);
-  background: rgba(255, 51, 84, 0.1);
+  background: var(--danger-soft);
   border: 1px solid var(--danger);
   color: var(--danger);
   font-family: var(--font-display);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .hanbang-pulse {
   font-weight: 700;
-  letter-spacing: 0.1em;
-  animation: pulse 1.2s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  letter-spacing: 0.06em;
 }
 
 /* ==================== END ==================== */
@@ -568,12 +647,13 @@ body.amoled {
   padding: 14px 18px;
   border-radius: var(--radius);
   background: var(--bg-1);
+  border: 1px solid var(--border);
   border-left: 4px solid var(--c);
 }
 
 .podium-item.rank-1 {
-  box-shadow: 0 0 16px var(--c);
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--bg-2);
+  border-color: var(--c);
 }
 
 .podium-item .rank {
@@ -585,6 +665,7 @@ body.amoled {
 }
 
 .podium-item .pname {
+  font-family: var(--font-display);
   font-weight: 700;
   font-size: 1.1rem;
 }
@@ -601,9 +682,12 @@ body.amoled {
 }
 
 /* ==================== RESPONSIVE — Galaxy S25 Ultra portrait ==================== */
-/* Viewport CSS ~412×915 px, DPR ~3.4. La media query cible portrait étroit avec
-   pointer coarse, pour ne pas affecter le desktop. */
 @media (max-width: 480px) and (pointer: coarse) {
+  .theme-switch {
+    width: 36px;
+    height: 36px;
+    font-size: 0.95rem;
+  }
   .layout {
     padding: 12px;
     gap: 10px;
@@ -638,9 +722,4 @@ body.amoled {
   .players-grid {
     grid-template-columns: 1fr;
   }
-}
-
-/* Préventif : éviter le bounce iOS-like sur Android Samsung */
-html {
-  overscroll-behavior: none;
 }
