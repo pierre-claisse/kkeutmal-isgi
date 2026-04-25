@@ -138,16 +138,6 @@ html {
   letter-spacing: 0.02em;
 }
 
-.subtitle {
-  text-align: center;
-  color: var(--fg-mute);
-  font-family: var(--font-body);
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  font-size: 0.78rem;
-  margin: -2px 0 18px;
-}
-
 /* ==================== HOME ==================== */
 
 .home-form {

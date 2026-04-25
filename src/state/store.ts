@@ -9,7 +9,7 @@ export type Mode =
   | { kind: 'time'; seconds: number }
   | { kind: 'score'; target: number };
 
-export interface Player {
+interface Player {
   id: number; // 0..5 (jusqu'à 6 joueurs ; 6e slot = IA en mode 1 joueur)
   name: string;
   color: string;
@@ -17,7 +17,7 @@ export interface Player {
   isAI: boolean;
 }
 
-export interface Move {
+interface Move {
   word: string;
   playerId: number;
   auto: boolean;       // mot trouvé via le bouton "trouver auto" (0 point)
@@ -25,10 +25,8 @@ export interface Move {
   ts: number;
 }
 
-export type Phase = 'home' | 'playing' | 'end';
-
-export interface GameState {
-  phase: Phase;
+interface GameState {
+  phase: 'home' | 'playing' | 'end';
   players: Player[];
   currentPlayerIdx: number;
   chain: Move[];
@@ -41,7 +39,7 @@ export interface GameState {
   winnerId: number | null;
 }
 
-export interface StartConfig {
+interface StartConfig {
   playerNames: string[]; // 1..6 ; en mode 1 joueur, l'IA est ajoutée d'office
   duumOn: boolean;
   mode: Mode;
@@ -125,8 +123,7 @@ class Store extends EventTarget {
     this.emit();
   }
 
-  /** Retourne le mot précédent (la dernière entrée de la chaîne), ou null. */
-  prevWord(): string | null {
+  private prevWord(): string | null {
     const last = this.s.chain[this.s.chain.length - 1];
     return last ? last.word : null;
   }

@@ -124,7 +124,6 @@ async function main() {
 
   // Tri alpha pour stabilité
   kept.sort();
-  const wordToIdx = new Map(kept.map((w, i) => [w, i]));
 
   const byInitial = {};
   for (let i = 0; i < kept.length; i++) {
@@ -139,7 +138,6 @@ async function main() {
   console.log(
     `[refine] wrote ${DICT_PATH} (${sizeKb} KB), ${kept.length} words, ${Object.keys(byInitial).length} initials`,
   );
-  void wordToIdx;
 }
 
 main().catch((err) => {

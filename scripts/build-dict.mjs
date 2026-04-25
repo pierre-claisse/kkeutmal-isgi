@@ -101,8 +101,6 @@ async function build() {
 
   // Tri pour stabilité du JSON entre builds
   const words = [...seen].sort();
-  const wordToIdx = new Map();
-  for (let i = 0; i < words.length; i++) wordToIdx.set(words[i], i);
 
   // Index par syllabe initiale → liste d'indices
   const byInitial = {};

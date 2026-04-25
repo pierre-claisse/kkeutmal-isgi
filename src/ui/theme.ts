@@ -9,7 +9,7 @@ export function colorFor(playerIdx: number): string {
 
 // ==================== Theme management ====================
 
-export type Theme = 'dark' | 'light';
+type Theme = 'dark' | 'light';
 
 const THEME_COLORS: Record<Theme, string> = {
   dark: '#000000',
@@ -35,19 +35,14 @@ export function getTheme(): Theme {
   return current;
 }
 
-export function setTheme(t: Theme) {
-  current = t;
-  applyTheme(t);
-  for (const l of listeners) l(t);
-}
-
 export function toggleTheme() {
-  setTheme(current === 'dark' ? 'light' : 'dark');
+  current = current === 'dark' ? 'light' : 'dark';
+  applyTheme(current);
+  for (const l of listeners) l(current);
 }
 
-export function onThemeChange(cb: (t: Theme) => void): () => void {
+export function onThemeChange(cb: (t: Theme) => void): void {
   listeners.add(cb);
-  return () => listeners.delete(cb);
 }
 
 export function initTheme() {

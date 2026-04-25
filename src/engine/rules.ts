@@ -7,7 +7,7 @@ export type ValidationResult =
   | { ok: true }
   | { ok: false; reason: ValidationError };
 
-export type ValidationError =
+type ValidationError =
   | 'empty'
   | 'not-hangul'
   | 'too-short'
@@ -15,7 +15,7 @@ export type ValidationError =
   | 'already-used'
   | 'wrong-initial';
 
-export interface ValidateContext {
+interface ValidateContext {
   prevWord: string | null;     // null → premier coup, ou tour libre après 한방단어
   duumOn: boolean;
   freeTurn: boolean;            // tour libre (après 한방단어 ou premier coup)
