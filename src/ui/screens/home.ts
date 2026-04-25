@@ -27,7 +27,7 @@ export function renderHome(root: HTMLElement) {
             type: 'text',
             name: `player-${i}`,
             placeholder: `플레이어 ${i + 1}`,
-            maxlength: 12,
+            maxlength: 30,
             autocomplete: 'off',
           }),
         ),
