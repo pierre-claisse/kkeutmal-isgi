@@ -98,7 +98,6 @@ export function renderHome(root: HTMLElement) {
       },
     },
     h('h1', { class: 'title' }, '끝말잇기'),
-    h('p', { class: 'subtitle' }, 'Word Chain — Korean'),
 
     h(
       'fieldset',
