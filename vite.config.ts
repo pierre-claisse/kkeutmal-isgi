@@ -1,7 +1,12 @@
 import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
+// En déploiement GitHub Pages, l'app est servie sous /kkeutmal-isgi/.
+// En dev local et preview, on garde la racine.
+const isPages = process.env.GITHUB_PAGES === 'true';
+
 export default defineConfig({
+  base: isPages ? '/kkeutmal-isgi/' : '/',
   plugins: [
     VitePWA({
       registerType: 'autoUpdate',

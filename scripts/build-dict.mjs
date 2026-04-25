@@ -63,6 +63,13 @@ function isAllHangul(s) {
 }
 
 async function build() {
+  // Skip si dict.json existe déjà (cas du CI ou git clone frais).
+  // Pour forcer un rebuild, supprimer src/data/dict.json ou passer --force.
+  const force = process.argv.includes('--force');
+  if (!force && (await exists(OUT_PATH))) {
+    console.log(`[build-dict] ${OUT_PATH} already exists, skipping (use --force to rebuild)`);
+    return;
+  }
   await ensureCsv();
   console.log('[build-dict] reading CSV...');
   const raw = await readFile(CSV_PATH, 'utf8');
