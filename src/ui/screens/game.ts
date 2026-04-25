@@ -3,8 +3,8 @@
 import { ERROR_MESSAGES } from '../../engine/rules';
 import { store } from '../../state/store';
 import { HangulComposer } from '../../util/hangulIme';
-import { googleTranslateUrl, naverUrl } from '../../util/naverLink';
 import { buildHangulKeyboard } from '../components/hangulKeyboard';
+import { buildPebbleChain, type PebbleData } from '../components/pebbleChain';
 import { h } from '../dom';
 import { colorFor } from '../theme';
 
@@ -157,47 +157,17 @@ export function renderGame(root: HTMLElement) {
     s.mode.kind === 'time' ? mountTimer(s.remainingMs ?? 0) : null,
   );
 
-  // Chaîne de mots (scrollable)
-  const chainList = h(
-    'ol',
-    { class: 'chain-list' },
-    ...s.chain.map((m, idx) => {
-      const c = m.playerId < 0 ? '#666' : colorFor(s.players.findIndex((p) => p.id === m.playerId));
-      return h(
-        'li',
-        { class: `chain-item ${m.isHanbang ? 'hanbang' : ''}`, style: `--c: ${c}` },
-        h('span', { class: 'idx' }, String(idx + 1)),
-        h('span', { class: 'dot', 'aria-hidden': 'true' }),
-        h('span', { class: 'word' }, m.word),
-        h(
-          'a',
-          {
-            class: 'lookup naver',
-            href: naverUrl(m.word),
-            target: '_blank',
-            rel: 'noopener noreferrer',
-            title: 'Naver 사전에서 보기',
-            'aria-label': `${m.word} - Naver 사전`,
-          },
-          '↗',
-        ),
-        h(
-          'a',
-          {
-            class: 'lookup gt',
-            href: googleTranslateUrl(m.word),
-            target: '_blank',
-            rel: 'noopener noreferrer',
-            title: 'Google 번역 (KO→FR)',
-            'aria-label': `${m.word} - Traduction française via Google Translate`,
-          },
-          'FR',
-        ),
-        m.auto ? h('span', { class: 'flag' }, 'auto') : null,
-        m.isHanbang ? h('span', { class: 'flag hb' }, '한방') : null,
-      );
-    }),
-  );
+  // Chaîne de mots — pierres reliées par courbes organiques
+  const pebbles: PebbleData[] = s.chain.map((m) => ({
+    word: m.word,
+    color:
+      m.playerId < 0
+        ? 'var(--fg-mute)'
+        : colorFor(s.players.findIndex((p) => p.id === m.playerId)),
+    auto: m.auto,
+    isHanbang: m.isHanbang,
+  }));
+  const chainList = buildPebbleChain(pebbles);
 
   // Auto-scroll vers le bas
   setTimeout(() => {

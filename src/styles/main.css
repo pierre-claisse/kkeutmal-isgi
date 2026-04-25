@@ -408,95 +408,119 @@ html {
   color: var(--accent);
 }
 
-.chain-list {
-  list-style: none;
-  margin: 0;
-  padding: 12px;
+.pebble-chain {
+  position: relative;
   background: var(--bg-1);
-  border-radius: var(--radius);
   border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 14px;
   max-height: 60vh;
   overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
   scroll-behavior: smooth;
 }
 
-.chain-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 12px;
-  border-radius: var(--radius-sm);
-  background: var(--bg-2);
-  border-left: 3px solid var(--c, var(--border));
+.pebble-paths {
+  position: absolute;
+  inset: 18px 14px auto;
+  height: calc(100% - 36px);
+  pointer-events: none;
+  z-index: 0;
 }
 
-.chain-item .idx {
+.pebbles {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px 18px;
+  align-items: center;
+}
+
+/* Vague subtile : alternance de positions verticales par cycle de 4 */
+.pebble:nth-child(4n + 1) { transform: translateY(0); }
+.pebble:nth-child(4n + 2) { transform: translateY(-6px); }
+.pebble:nth-child(4n + 3) { transform: translateY(0); }
+.pebble:nth-child(4n + 4) { transform: translateY(6px); }
+
+.pebble {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px 7px 10px;
+  background: var(--bg-2);
+  border: 1.5px solid var(--c, var(--border));
+  border-radius: 999px;
+  font-family: var(--font-display);
+  color: var(--fg);
+  white-space: nowrap;
+  transition: transform 0.15s ease;
+}
+
+.pebble.hanbang {
+  border-style: dashed;
+  background: var(--danger-soft);
+}
+
+.pebble .p-num {
   font-family: var(--font-body);
   font-weight: 600;
-  font-size: 0.75rem;
-  color: var(--fg-mute);
-  min-width: 26px;
-  text-align: right;
+  font-size: 0.7rem;
+  color: var(--c, var(--fg-mute));
+  background: var(--bg);
+  border: 1px solid var(--c, var(--border));
+  border-radius: 999px;
+  min-width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 6px;
 }
 
-.chain-item .dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--c, var(--border-strong));
-}
-
-.chain-item .word {
-  font-family: var(--font-display);
+.pebble .p-word {
   font-weight: 700;
-  font-size: 1.15rem;
-  color: var(--fg);
-  flex: 1;
+  font-size: 1.05rem;
 }
 
-.chain-item .lookup {
+.pebble .p-lookup {
   color: var(--fg-mute);
   text-decoration: none;
   font-family: var(--font-body);
   font-weight: 600;
-  font-size: 0.95rem;
-  padding: 2px 6px;
+  font-size: 0.85rem;
+  padding: 1px 5px;
   border-radius: var(--radius-sm);
   transition: color 0.15s, background 0.15s;
-  white-space: nowrap;
 }
 
-.chain-item .lookup.naver {
-  font-size: 1.1rem;
+.pebble .p-lookup.naver {
+  font-size: 1rem;
   font-weight: 400;
 }
 
-.chain-item .lookup.naver:hover {
+.pebble .p-lookup.naver:hover {
   color: var(--accent);
   background: var(--accent-soft);
 }
 
-.chain-item .lookup.gt:hover {
-  color: var(--p1);
-  background: rgba(31, 78, 138, 0.1);
+.pebble .p-lookup.gt:hover {
+  color: var(--c, var(--accent));
+  background: var(--bg-1);
 }
 
-.chain-item .flag {
+.pebble .p-flag {
   font-family: var(--font-body);
-  font-size: 0.65rem;
+  font-size: 0.62rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  padding: 2px 6px;
+  padding: 1px 5px;
   border-radius: var(--radius-sm);
   background: var(--bg-1);
   color: var(--fg-mute);
   border: 1px solid var(--border);
 }
 
-.chain-item .flag.hb {
+.pebble .p-flag.hb {
   background: var(--danger-soft);
   color: var(--danger);
   border-color: var(--danger);
@@ -761,7 +785,7 @@ html {
   .timer {
     font-size: 1.6rem;
   }
-  .chain-list {
+  .pebble-chain {
     max-height: none;
     flex: 1;
   }
