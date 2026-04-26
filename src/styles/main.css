@@ -440,15 +440,15 @@ html {
   text-align: center;
 }
 
-/* Score cible affiché en sous-titre sous le titre du jeu. */
-.game-title small {
-  display: block;
-  margin-top: 6px;
+/* Score cible : affiché en élément flex entre le titre et la liste
+   des scores (le user voit la cible dans le contexte des scores). */
+.game-target {
   font-family: var(--font-body);
-  font-size: 0.85rem;
   font-weight: 500;
+  font-size: 0.95rem;
   color: var(--fg-mute);
   letter-spacing: 0.04em;
+  white-space: nowrap;
 }
 
 .score {
