@@ -544,19 +544,14 @@ html {
   color: var(--fg-mute);
   text-decoration: none;
   font-family: var(--font-body);
-  font-weight: 600;
-  font-size: 0.85rem;
+  font-weight: 400;
+  font-size: 1rem;
   padding: 1px 5px;
   border-radius: var(--radius-sm);
   transition: color 0.15s, background 0.15s;
 }
 
-.pebble .p-lookup.naver {
-  font-size: 1rem;
-  font-weight: 400;
-}
-
-.pebble .p-lookup.naver:hover {
+.pebble .p-lookup:hover {
   color: var(--accent);
   background: var(--accent-soft);
 }
