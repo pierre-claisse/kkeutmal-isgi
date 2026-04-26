@@ -171,19 +171,26 @@ export function renderGame(root: HTMLElement) {
   // chronologique : premier mot en haut, dernier en bas). Le scroll-to-
   // bottom est déclenché en interne par le composant, avant le premier
   // paint, pour éviter le flash/jump visible.
-  const pebbles: PebbleData[] = s.chain.map((m, i) => ({
-    word: m.word,
-    // Auto-found words : couleur neutre quel que soit le joueur, on
-    // signale ainsi visuellement qu'il n'y a pas eu de point obtenu.
-    color: m.auto
-      ? 'var(--auto-c)'
-      : m.playerId < 0
-        ? 'var(--fg-mute)'
-        : colorFor(s.players.findIndex((p) => p.id === m.playerId)),
-    auto: m.auto,
-    isHanbang: m.isHanbang,
-    index: i + 1,
-  }));
+  const pebbles: PebbleData[] = s.chain.map((m, i) => {
+    const owner =
+      m.playerId >= 0 ? s.players.find((p) => p.id === m.playerId) : undefined;
+    return {
+      word: m.word,
+      // Auto-found words : couleur neutre quel que soit le joueur, on
+      // signale ainsi visuellement qu'il n'y a pas eu de point obtenu.
+      color: m.auto
+        ? 'var(--auto-c)'
+        : owner
+          ? colorFor(s.players.findIndex((p) => p.id === owner.id))
+          : 'var(--fg-mute)',
+      auto: m.auto,
+      isHanbang: m.isHanbang,
+      index: i + 1,
+      // Pseudo en label sur la bordure : seulement pour les mots où
+      // le joueur a effectivement marqué un point.
+      author: !m.auto && owner ? owner.name : undefined,
+    };
+  });
   const chainList = buildPebbleChain(pebbles);
 
   const layout = h(

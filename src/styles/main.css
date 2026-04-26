@@ -507,6 +507,7 @@ html {
 }
 
 .pebble {
+  position: relative;
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
@@ -518,6 +519,27 @@ html {
   font-family: var(--font-display);
   color: var(--fg);
   white-space: nowrap;
+}
+
+/* Pseudo du joueur inséré dans la bordure (façon <legend> de fieldset).
+   Background = couleur du conteneur (chain) pour « percer » la bordure. */
+.pebble .p-author {
+  position: absolute;
+  top: -7px;
+  left: 14px;
+  padding: 0 5px;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.62rem;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  color: var(--c, var(--fg-mute));
+  background: var(--bg-1);
+  white-space: nowrap;
+  pointer-events: none;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .pebble.hanbang {

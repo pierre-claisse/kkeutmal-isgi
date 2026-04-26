@@ -11,6 +11,7 @@ export interface PebbleData {
   auto: boolean;
   isHanbang: boolean;
   index: number;     // numéro chronologique 1-based affiché dans la pastille
+  author?: string;   // pseudo du joueur (absent pour auto/seed système)
 }
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -67,6 +68,13 @@ function buildPebble(p: PebbleData): HTMLElement {
   const el = document.createElement('div');
   el.className = `pebble${p.isHanbang ? ' hanbang' : ''}${p.auto ? ' auto' : ''}`;
   el.style.setProperty('--c', p.color);
+
+  if (p.author) {
+    const author = document.createElement('span');
+    author.className = 'p-author';
+    author.textContent = p.author;
+    el.appendChild(author);
+  }
 
   const num = document.createElement('span');
   num.className = 'p-num';
