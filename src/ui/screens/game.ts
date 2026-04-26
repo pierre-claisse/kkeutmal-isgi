@@ -173,8 +173,11 @@ export function renderGame(root: HTMLElement) {
   // paint, pour éviter le flash/jump visible.
   const pebbles: PebbleData[] = s.chain.map((m, i) => ({
     word: m.word,
-    color:
-      m.playerId < 0
+    // Auto-found words : couleur neutre quel que soit le joueur, on
+    // signale ainsi visuellement qu'il n'y a pas eu de point obtenu.
+    color: m.auto
+      ? 'var(--auto-c)'
+      : m.playerId < 0
         ? 'var(--fg-mute)'
         : colorFor(s.players.findIndex((p) => p.id === m.playerId)),
     auto: m.auto,

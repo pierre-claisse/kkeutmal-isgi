@@ -28,6 +28,9 @@
   /* Surface translucide pour le clavier flottant. */
   --kb-bg: rgba(12, 12, 12, 0.7);
 
+  /* Couleur grise neutre pour les pebbles auto-trouvés (passifs). */
+  --auto-c: rgba(236, 229, 211, 0.4);
+
   /* Player palette (단청 inspirée — fonctionne sur les deux thèmes) */
   --p1: #2c5d8f;       /* 청 indigo */
   --p2: #b8362b;       /* 적 rouge */
@@ -57,6 +60,9 @@
 
   /* Surface translucide pour le clavier flottant. */
   --kb-bg: rgba(239, 231, 207, 0.78);
+
+  /* Couleur grise neutre pour les pebbles auto-trouvés (passifs). */
+  --auto-c: rgba(31, 26, 20, 0.35);
 
   /* Player palette identique : couleurs 단청 lisibles sur les deux fonds */
   --p1: #1f4e8a;
@@ -517,6 +523,13 @@ html {
 .pebble.hanbang {
   border-style: dashed;
   background: var(--danger-soft);
+}
+
+/* Mots trouvés via auto-find : visuellement passifs (gris neutre),
+   pas de couleur joueur. */
+.pebble.auto {
+  color: var(--fg-mute);
+  background: var(--bg-1);
 }
 
 .pebble .p-num {

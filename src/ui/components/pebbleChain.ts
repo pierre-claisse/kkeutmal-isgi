@@ -65,7 +65,7 @@ export function buildPebbleChain(items: readonly PebbleData[]): HTMLElement {
 
 function buildPebble(p: PebbleData): HTMLElement {
   const el = document.createElement('div');
-  el.className = `pebble${p.isHanbang ? ' hanbang' : ''}`;
+  el.className = `pebble${p.isHanbang ? ' hanbang' : ''}${p.auto ? ' auto' : ''}`;
   el.style.setProperty('--c', p.color);
 
   const num = document.createElement('span');
@@ -88,12 +88,6 @@ function buildPebble(p: PebbleData): HTMLElement {
   naver.textContent = '↗';
   el.appendChild(naver);
 
-  if (p.auto) {
-    const flag = document.createElement('span');
-    flag.className = 'p-flag';
-    flag.textContent = 'auto';
-    el.appendChild(flag);
-  }
   if (p.isHanbang) {
     const flag = document.createElement('span');
     flag.className = 'p-flag hb';
