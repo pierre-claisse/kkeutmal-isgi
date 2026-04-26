@@ -413,10 +413,18 @@ html {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
-  /* Pousse les scores vers la droite : turn-card reste à gauche, le
-     dernier score (player le plus à droite) est suivi du quit-button
-     avec un gap de 16 px (= flex gap du game-header). */
-  margin-left: auto;
+}
+
+/* Titre du jeu centré entre le turn-card et la liste des scores
+   via les auto margins flex (chacune absorbe la moitié du free space). */
+.game-title {
+  margin: 0;
+  margin-inline: auto;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.8rem;
+  letter-spacing: 0.02em;
+  color: var(--fg);
 }
 
 .score {
@@ -546,11 +554,6 @@ html {
   background: var(--bg-1);
   white-space: nowrap;
   pointer-events: none;
-  /* Largeur capée à celle du mot, ellipsis pour les pseudos plus longs. */
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  box-sizing: border-box;
 }
 
 .pebble.hanbang {
