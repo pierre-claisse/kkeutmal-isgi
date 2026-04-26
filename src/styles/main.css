@@ -25,9 +25,13 @@
   --scroll-thumb: rgba(236, 229, 211, 0.22);
   --scroll-thumb-hover: var(--accent);
 
-  /* Surface translucide pour le clavier flottant. */
-  --kb-bg: rgba(12, 12, 12, 0.55);
-  --kb-shadow: 0 12px 48px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+  /* Surface translucide pour le clavier flottant. Très transparente,
+     ombre étalée en plusieurs couches diffuses (pas de bord net). */
+  --kb-bg: rgba(12, 12, 12, 0.38);
+  --kb-shadow:
+    0 6px 18px rgba(0, 0, 0, 0.18),
+    0 16px 40px rgba(0, 0, 0, 0.22),
+    0 32px 80px rgba(0, 0, 0, 0.25);
 
   /* Couleur grise neutre pour les pebbles auto-trouvés (passifs). */
   --auto-c: rgba(236, 229, 211, 0.4);
@@ -59,9 +63,13 @@
   --scroll-thumb: rgba(31, 26, 20, 0.22);
   --scroll-thumb-hover: var(--accent);
 
-  /* Surface translucide pour le clavier flottant. */
-  --kb-bg: rgba(239, 231, 207, 0.65);
-  --kb-shadow: 0 14px 44px rgba(31, 26, 20, 0.18), 0 4px 12px rgba(31, 26, 20, 0.08);
+  /* Surface translucide pour le clavier flottant. Très transparente,
+     ombre étalée en plusieurs couches diffuses (pas de bord net). */
+  --kb-bg: rgba(239, 231, 207, 0.5);
+  --kb-shadow:
+    0 6px 18px rgba(31, 26, 20, 0.04),
+    0 16px 40px rgba(31, 26, 20, 0.05),
+    0 32px 80px rgba(31, 26, 20, 0.06);
 
   /* Couleur grise neutre pour les pebbles auto-trouvés (passifs). */
   --auto-c: rgba(31, 26, 20, 0.35);
@@ -751,10 +759,10 @@ html {
 
 .hangul-keyboard {
   background: var(--kb-bg, var(--bg-1));
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  /* Pas de bordure visible : box-shadow douce qui donne un effet
-     de flottement sur un nuage. */
+  backdrop-filter: blur(22px) saturate(140%);
+  -webkit-backdrop-filter: blur(22px) saturate(140%);
+  /* Pas de bordure : trois box-shadows superposées (proche, moyen, loin)
+     se fondent pour un halo atmosphérique sans bord visible. */
   border: none;
   box-shadow: var(--kb-shadow);
   border-radius: var(--radius);
