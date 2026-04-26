@@ -26,7 +26,8 @@
   --scroll-thumb-hover: var(--accent);
 
   /* Surface translucide pour le clavier flottant. */
-  --kb-bg: rgba(12, 12, 12, 0.7);
+  --kb-bg: rgba(12, 12, 12, 0.55);
+  --kb-shadow: 0 12px 48px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.04) inset;
 
   /* Couleur grise neutre pour les pebbles auto-trouvés (passifs). */
   --auto-c: rgba(236, 229, 211, 0.4);
@@ -59,7 +60,8 @@
   --scroll-thumb-hover: var(--accent);
 
   /* Surface translucide pour le clavier flottant. */
-  --kb-bg: rgba(239, 231, 207, 0.78);
+  --kb-bg: rgba(239, 231, 207, 0.65);
+  --kb-shadow: 0 14px 44px rgba(31, 26, 20, 0.18), 0 4px 12px rgba(31, 26, 20, 0.08);
 
   /* Couleur grise neutre pour les pebbles auto-trouvés (passifs). */
   --auto-c: rgba(31, 26, 20, 0.35);
@@ -416,13 +418,14 @@ html {
 }
 
 /* Titre du jeu centré entre le turn-card et la liste des scores
-   via les auto margins flex (chacune absorbe la moitié du free space). */
+   via les auto margins flex (chacune absorbe la moitié du free space).
+   Même taille que le titre de l'écran d'accueil. */
 .game-title {
   margin: 0;
   margin-inline: auto;
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 1.8rem;
+  font-size: clamp(2.4rem, 6vw, 3.4rem);
   letter-spacing: 0.02em;
   color: var(--fg);
 }
@@ -750,7 +753,10 @@ html {
   background: var(--kb-bg, var(--bg-1));
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  border: 1px solid var(--border-strong);
+  /* Pas de bordure visible : box-shadow douce qui donne un effet
+     de flottement sur un nuage. */
+  border: none;
+  box-shadow: var(--kb-shadow);
   border-radius: var(--radius);
   padding: 8px;
   display: flex;
