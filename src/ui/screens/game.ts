@@ -123,6 +123,22 @@ export function renderGame(root: HTMLElement) {
     ),
   );
 
+  const quitBtn = h(
+    'button',
+    {
+      type: 'button',
+      class: 'quit-button',
+      title: '메뉴로 돌아가기',
+      'aria-label': '메뉴로 돌아가기',
+      onclick: () => {
+        if (confirm('현재 게임을 종료하고 메뉴로 돌아갑니다.')) {
+          store.reset();
+        }
+      },
+    },
+    '✕',
+  );
+
   // Header
   const header = h(
     'header',
@@ -148,6 +164,7 @@ export function renderGame(root: HTMLElement) {
         ),
       ),
     ),
+    quitBtn,
   );
 
   // Chaîne de mots — pierres reliées par courbes organiques (ordre
@@ -176,24 +193,7 @@ export function renderGame(root: HTMLElement) {
     inputBar,
   );
 
-  const quitBtn = h(
-    'button',
-    {
-      type: 'button',
-      class: 'quit-button',
-      title: '메뉴로 돌아가기',
-      'aria-label': '메뉴로 돌아가기',
-      onclick: () => {
-        if (confirm('현재 게임을 종료하고 메뉴로 돌아갑니다.')) {
-          store.reset();
-        }
-      },
-    },
-    '✕',
-  );
-
   root.appendChild(layout);
-  root.appendChild(quitBtn);
   if (!me.isAI) inputEl.focus();
 
   // Coup IA après 800ms

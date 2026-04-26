@@ -147,11 +147,10 @@ html {
 
 /* ==================== THEME SWITCHER ==================== */
 
+/* Pastilles rondes : theme switcher (fixe, hors partie) et quit
+   (dans le header de la partie). Mêmes dimensions et styles. */
 .theme-switch,
 .quit-button {
-  position: fixed;
-  top: calc(env(safe-area-inset-top) + 14px);
-  right: calc(env(safe-area-inset-right) + 14px);
   width: 40px;
   height: 40px;
   display: flex;
@@ -163,8 +162,16 @@ html {
   color: var(--fg);
   cursor: pointer;
   font-size: 1.05rem;
-  z-index: 1000;
+  flex-shrink: 0;
   transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+/* Le theme switcher flotte fixé en haut-droite quand visible. */
+.theme-switch {
+  position: fixed;
+  top: calc(env(safe-area-inset-top) + 14px);
+  right: calc(env(safe-area-inset-right) + 14px);
+  z-index: 1000;
 }
 
 .theme-switch:hover {
@@ -383,10 +390,10 @@ html {
 .game-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 16px;
   flex-wrap: wrap;
 }
+
 
 .turn-card {
   padding: 12px 18px;
@@ -416,6 +423,10 @@ html {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
+  /* Pousse les scores vers la droite : turn-card reste à gauche, le
+     dernier score (player le plus à droite) est suivi du quit-button
+     avec un gap de 16 px (= flex gap du game-header). */
+  margin-left: auto;
 }
 
 .score {
