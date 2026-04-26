@@ -147,9 +147,7 @@ html {
 
 /* ==================== THEME SWITCHER ==================== */
 
-/* Pastilles rondes : theme switcher (fixe, hors partie) et quit
-   (dans le header de la partie). Mêmes dimensions et styles. */
-.theme-switch,
+/* Pastille ronde de sortie de partie, dans le header. */
 .quit-button {
   width: 40px;
   height: 40px;
@@ -164,20 +162,6 @@ html {
   font-size: 1.05rem;
   flex-shrink: 0;
   transition: background 0.15s, border-color 0.15s, color 0.15s;
-}
-
-/* Le theme switcher flotte fixé en haut-droite quand visible. */
-.theme-switch {
-  position: fixed;
-  top: calc(env(safe-area-inset-top) + 14px);
-  right: calc(env(safe-area-inset-right) + 14px);
-  z-index: 1000;
-}
-
-.theme-switch:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-  background: var(--accent-soft);
 }
 
 .quit-button:hover {

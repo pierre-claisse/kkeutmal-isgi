@@ -16,17 +16,16 @@ const THEME_COLORS: Record<Theme, string> = {
   light: '#f7f1e1',
 };
 
-const lightQuery =
+const darkQuery =
   typeof window !== 'undefined'
-    ? window.matchMedia('(prefers-color-scheme: light)')
+    ? window.matchMedia('(prefers-color-scheme: dark)')
     : null;
 
+// Le thème suit toujours le réglage système. Clair par défaut si
+// l'information n'est pas disponible.
 function systemTheme(): Theme {
-  return lightQuery?.matches ? 'light' : 'dark';
+  return darkQuery?.matches ? 'dark' : 'light';
 }
-
-let current: Theme = systemTheme();
-const listeners = new Set<(t: Theme) => void>();
 
 function applyTheme(t: Theme) {
   document.documentElement.setAttribute('data-theme', t);
@@ -34,27 +33,7 @@ function applyTheme(t: Theme) {
   if (meta) meta.setAttribute('content', THEME_COLORS[t]);
 }
 
-function setCurrent(t: Theme) {
-  current = t;
-  applyTheme(t);
-  for (const l of listeners) l(t);
-}
-
-// Si le thème du système change pendant la session, on suit.
-lightQuery?.addEventListener('change', () => setCurrent(systemTheme()));
-
-export function getTheme(): Theme {
-  return current;
-}
-
-export function toggleTheme() {
-  setCurrent(current === 'dark' ? 'light' : 'dark');
-}
-
-export function onThemeChange(cb: (t: Theme) => void): void {
-  listeners.add(cb);
-}
-
 export function initTheme() {
-  applyTheme(current);
+  applyTheme(systemTheme());
+  darkQuery?.addEventListener('change', () => applyTheme(systemTheme()));
 }
