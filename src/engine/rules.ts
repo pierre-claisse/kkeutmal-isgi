@@ -41,17 +41,22 @@ export function validateMove(word: string, ctx: ValidateContext): ValidationResu
 
 /**
  * Détermine si le mot est un 한방단어 : la dernière syllabe (étendue par 두음
- * si toggle ON) n'a aucun successeur dans le dictionnaire.
+ * si toggle ON) n'a aucun successeur DIFFÉRENT du mot lui-même dans le
+ * dictionnaire.
  *
- * On ignore l'historique `used` ici : un mot est intrinsèquement 한방단어
- * (par rapport au lexique) ou ne l'est pas. Cela évite des "faux positifs"
- * en fin de partie quand presque tous les mots sont déjà joués.
+ * On ignore l'historique `used` (intrinsèque au lexique, pas à la partie),
+ * mais on exclut le mot courant : un mot dont la seule continuation
+ * possible est lui-même (ex. 곧곧, dont la finale 곧 n'a que 곧곧 comme
+ * mot-débutant) est de facto un cul-de-sac.
  */
 export function isHanbang(word: string, dict: Dict, duumOn: boolean): boolean {
   const tails = acceptableInitials(lastSyllable(word), duumOn);
   for (const t of tails) {
     const bucket = dict.byInitial.get(t);
-    if (bucket && bucket.length > 0) return false;
+    if (!bucket) continue;
+    for (const w of bucket) {
+      if (w !== word) return false;
+    }
   }
   return true;
 }
