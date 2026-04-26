@@ -69,13 +69,6 @@ function buildPebble(p: PebbleData): HTMLElement {
   el.className = `pebble${p.isHanbang ? ' hanbang' : ''}${p.auto ? ' auto' : ''}`;
   el.style.setProperty('--c', p.color);
 
-  if (p.author) {
-    const author = document.createElement('span');
-    author.className = 'p-author';
-    author.textContent = p.author;
-    el.appendChild(author);
-  }
-
   const num = document.createElement('span');
   num.className = 'p-num';
   num.textContent = String(p.index);
@@ -83,7 +76,15 @@ function buildPebble(p: PebbleData): HTMLElement {
 
   const word = document.createElement('span');
   word.className = 'p-word';
-  word.textContent = p.word;
+  if (p.author) {
+    // Le pseudo est ancré sur le mot pour pouvoir être centré dessus
+    // et limité à sa largeur (overflow: ellipsis).
+    const author = document.createElement('span');
+    author.className = 'p-author';
+    author.textContent = p.author;
+    word.appendChild(author);
+  }
+  word.appendChild(document.createTextNode(p.word));
   el.appendChild(word);
 
   const naver = document.createElement('a');

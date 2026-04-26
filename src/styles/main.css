@@ -521,12 +521,21 @@ html {
   white-space: nowrap;
 }
 
-/* Pseudo du joueur inséré dans la bordure (façon <legend> de fieldset).
-   Background = couleur du conteneur (chain) pour « percer » la bordure. */
+/* Pseudo du joueur inséré dans la bordure (façon <legend> de fieldset),
+   ancré sur le mot pour être centré horizontalement dessus. Background
+   = couleur du conteneur (chain) pour « percer » la bordure. */
+.pebble .p-word {
+  position: relative;
+  display: inline-block;
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
 .pebble .p-author {
   position: absolute;
-  top: -7px;
-  left: 14px;
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
   padding: 0 5px;
   font-family: var(--font-body);
   font-weight: 600;
@@ -537,9 +546,11 @@ html {
   background: var(--bg-1);
   white-space: nowrap;
   pointer-events: none;
-  max-width: 120px;
+  /* Largeur capée à celle du mot, ellipsis pour les pseudos plus longs. */
+  max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
+  box-sizing: border-box;
 }
 
 .pebble.hanbang {
@@ -568,11 +579,6 @@ html {
   align-items: center;
   justify-content: center;
   padding: 0 6px;
-}
-
-.pebble .p-word {
-  font-weight: 700;
-  font-size: 1.05rem;
 }
 
 .pebble .p-lookup {
