@@ -3,7 +3,7 @@
 // Reliés par des courbes de Bézier organiques. Bin-packing greedy basé
 // sur la largeur naturelle des pebbles, recalculé via ResizeObserver.
 
-import { googleTranslateUrl, naverUrl } from '../../util/naverLink';
+import { naverUrl } from '../../util/naverLink';
 
 export interface PebbleData {
   word: string;
@@ -79,7 +79,7 @@ function buildPebble(p: PebbleData): HTMLElement {
   el.appendChild(word);
 
   const naver = document.createElement('a');
-  naver.className = 'p-lookup naver';
+  naver.className = 'p-lookup';
   naver.href = naverUrl(p.word);
   naver.target = '_blank';
   naver.rel = 'noopener noreferrer';
@@ -87,16 +87,6 @@ function buildPebble(p: PebbleData): HTMLElement {
   naver.setAttribute('aria-label', `${p.word} - Naver 사전`);
   naver.textContent = '↗';
   el.appendChild(naver);
-
-  const gt = document.createElement('a');
-  gt.className = 'p-lookup gt';
-  gt.href = googleTranslateUrl(p.word);
-  gt.target = '_blank';
-  gt.rel = 'noopener noreferrer';
-  gt.title = 'Google 번역 (KO→FR)';
-  gt.setAttribute('aria-label', `${p.word} - Traduction française`);
-  gt.textContent = 'FR';
-  el.appendChild(gt);
 
   if (p.auto) {
     const flag = document.createElement('span');

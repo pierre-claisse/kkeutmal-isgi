@@ -1,11 +1,6 @@
-// Liens externes ouverts depuis chaque mot validé de la chaîne.
+// Lien externe ouvert depuis chaque mot validé de la chaîne :
+// dictionnaire Naver KO (onglets multilingues dont FR quand l'entrée existe).
 
-/** Dictionnaire Naver KO (onglets multilingues dont FR quand l'entrée existe). */
 export function naverUrl(word: string): string {
   return `https://ko.dict.naver.com/#/search?query=${encodeURIComponent(word)}`;
-}
-
-/** Google Translate KO → FR. */
-export function googleTranslateUrl(word: string): string {
-  return `https://translate.google.com/?sl=ko&tl=fr&op=translate&text=${encodeURIComponent(word)}`;
 }

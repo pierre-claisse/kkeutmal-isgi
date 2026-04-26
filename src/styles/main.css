@@ -561,11 +561,6 @@ html {
   background: var(--accent-soft);
 }
 
-.pebble .p-lookup.gt:hover {
-  color: var(--c, var(--accent));
-  background: var(--bg-1);
-}
-
 .pebble .p-flag {
   font-family: var(--font-body);
   font-size: 0.62rem;
@@ -848,7 +843,7 @@ html {
 
 /* ==================== RESPONSIVE — Galaxy S25 Ultra portrait ==================== */
 @media (max-width: 480px) and (pointer: coarse) {
-  .theme-switch {
+  .quit-button {
     width: 36px;
     height: 36px;
     font-size: 0.95rem;
