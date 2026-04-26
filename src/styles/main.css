@@ -147,7 +147,8 @@ html {
 
 /* ==================== THEME SWITCHER ==================== */
 
-.theme-switch {
+.theme-switch,
+.quit-button {
   position: fixed;
   top: calc(env(safe-area-inset-top) + 14px);
   right: calc(env(safe-area-inset-right) + 14px);
@@ -170,6 +171,12 @@ html {
   border-color: var(--accent);
   color: var(--accent);
   background: var(--accent-soft);
+}
+
+.quit-button:hover {
+  border-color: var(--danger);
+  color: var(--danger);
+  background: var(--danger-soft);
 }
 
 /* ==================== TITLE ==================== */
