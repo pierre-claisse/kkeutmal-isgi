@@ -27,7 +27,7 @@
 
   /* Surface translucide pour le clavier flottant. Très transparente,
      ombre étalée en plusieurs couches diffuses (pas de bord net). */
-  --kb-bg: rgba(12, 12, 12, 0.25);
+  --kb-bg: rgba(12, 12, 12, 0.08);
   --kb-shadow:
     0 6px 18px rgba(0, 0, 0, 0.18),
     0 16px 40px rgba(0, 0, 0, 0.22),
@@ -65,7 +65,7 @@
 
   /* Surface translucide pour le clavier flottant. Très transparente,
      ombre étalée en plusieurs couches diffuses (pas de bord net). */
-  --kb-bg: rgba(239, 231, 207, 0.35);
+  --kb-bg: rgba(239, 231, 207, 0.18);
   --kb-shadow:
     0 6px 18px rgba(31, 26, 20, 0.04),
     0 16px 40px rgba(31, 26, 20, 0.05),
