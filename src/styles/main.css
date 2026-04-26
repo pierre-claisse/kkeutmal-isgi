@@ -435,7 +435,20 @@ html {
   font-weight: 700;
   font-size: clamp(2.4rem, 6vw, 3.4rem);
   letter-spacing: 0.02em;
+  line-height: 1;
   color: var(--fg);
+  text-align: center;
+}
+
+/* Score cible affiché en sous-titre sous le titre du jeu. */
+.game-title small {
+  display: block;
+  margin-top: 6px;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--fg-mute);
+  letter-spacing: 0.04em;
 }
 
 .score {

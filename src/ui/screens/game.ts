@@ -149,7 +149,12 @@ export function renderGame(root: HTMLElement) {
       h('div', { class: 'turn-label' }, '현재 차례'),
       h('div', { class: 'turn-name' }, me.name + (me.isAI ? ' 🤖' : '')),
     ),
-    h('h1', { class: 'game-title' }, '끝말잇기'),
+    h(
+      'h1',
+      { class: 'game-title' },
+      '끝말잇기',
+      h('small', {}, `목표 ${s.scoreTarget}점`),
+    ),
     h(
       'div',
       { class: 'scores' },
