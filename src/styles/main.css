@@ -476,10 +476,9 @@ html {
   background: var(--bg-1);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  /* Padding interne généreux : les U cross-row peuvent bomber jusqu'à
-     ≈ 80 px de chaque côté, le padding doit l'absorber sans frôler le
-     bord. Vertical un poil plus aéré aussi. */
-  padding: 24px 90px;
+  /* Marges internes latérales généreuses : laissent respirer les U
+     cross-row et donnent de l'air autour des pebbles. */
+  padding: 24px 120px;
   /* Remplit toute la hauteur disponible jusqu'à l'input fixe (via le
      padding-bottom du layout). flex/min-height pour permettre le scroll
      interne quand le contenu déborde. */
