@@ -15,8 +15,7 @@ export interface PebbleData {
 }
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
-const PEBBLE_GAP = 16;
-const STAGE_PAD_X = 14;
+const PEBBLE_GAP = 18; // doit matcher le `gap` CSS de .pebble-row
 
 export function buildPebbleChain(items: readonly PebbleData[]): HTMLElement {
   const wrap = document.createElement('div');
@@ -43,7 +42,7 @@ export function buildPebbleChain(items: readonly PebbleData[]): HTMLElement {
 
   let firstLayout = true;
   const layout = () => {
-    binPackIntoRows(wrap, rowsContainer, pebbleEls);
+    binPackIntoRows(rowsContainer, pebbleEls);
     drawPaths(stage, rowsContainer, svg, items);
     if (firstLayout) {
       // Avant le premier paint, on positionne le scroll en bas. Évite
@@ -108,11 +107,12 @@ function buildPebble(p: PebbleData): HTMLElement {
 }
 
 function binPackIntoRows(
-  wrap: HTMLElement,
   rowsContainer: HTMLElement,
   pebbles: readonly HTMLElement[],
 ) {
-  const usableWidth = wrap.clientWidth - 2 * STAGE_PAD_X;
+  // rowsContainer est à l'intérieur du padding du chain → son
+  // clientWidth est exactement la largeur de placement disponible.
+  const usableWidth = rowsContainer.clientWidth;
   if (usableWidth <= 0) return;
 
   // Vide les rangs sans détacher les pebbles (on les ré-attache).
