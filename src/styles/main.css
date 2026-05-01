@@ -512,12 +512,7 @@ html {
 .pebble-row {
   display: flex;
   flex-wrap: nowrap;
-  /* gap = MINIMUM entre pebbles ; justify-content: space-between
-     distribue l'espace en plus pour que la première et la dernière
-     pebble du rang touchent les bords → fins de rang alignées
-     entre tous les rangs, donc U cross-row strictement verticaux. */
   gap: 18px;
-  justify-content: space-between;
   align-items: center;
 }
 
