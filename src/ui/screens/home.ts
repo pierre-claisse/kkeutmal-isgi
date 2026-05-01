@@ -7,7 +7,6 @@ import { colorFor } from '../theme';
 export function renderHome(root: HTMLElement) {
   let nbPlayers = 1;
   let scoreTarget = 50;
-  let duumOn = true;
 
   const playersGrid = h('div', { class: 'players-grid' });
   const buildPlayersInputs = () => {
@@ -44,7 +43,6 @@ export function renderHome(root: HTMLElement) {
         }
         store.startGame({
           playerNames: names,
-          duumOn,
           scoreTarget: clamp(scoreTarget, 10, 1000),
         });
       },
@@ -100,29 +98,6 @@ export function renderHome(root: HTMLElement) {
             el.value = String(scoreTarget);
           },
         }),
-      ),
-    ),
-
-    h(
-      'fieldset',
-      { class: 'card' },
-      h('legend', {}, '규칙'),
-      h(
-        'label',
-        { class: 'row toggle' },
-        h('input', {
-          type: 'checkbox',
-          checked: true,
-          onchange: (e: Event) => {
-            duumOn = (e.target as HTMLInputElement).checked;
-          },
-        }),
-        h(
-          'span',
-          {},
-          '두음 법칙 적용 ',
-          h('em', { class: 'hint' }, '(녀→여, 료→요, 라→나 …)'),
-        ),
       ),
     ),
 

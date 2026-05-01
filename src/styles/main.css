@@ -236,17 +236,6 @@ html {
   flex-wrap: wrap;
 }
 
-.row.toggle {
-  cursor: pointer;
-  user-select: none;
-}
-
-.row.toggle input[type='checkbox'] {
-  width: 17px;
-  height: 17px;
-  accent-color: var(--accent);
-}
-
 .radios {
   flex-wrap: wrap;
   gap: 8px;
@@ -343,12 +332,6 @@ html {
 .mode-value input[type='number']:focus {
   outline: none;
   border-color: var(--accent);
-}
-
-.hint {
-  color: var(--fg-mute);
-  font-style: normal;
-  font-size: 0.85rem;
 }
 
 .cta {

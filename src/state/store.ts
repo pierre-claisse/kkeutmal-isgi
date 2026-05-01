@@ -26,7 +26,6 @@ interface GameState {
   currentPlayerIdx: number;
   chain: Move[];
   usedWords: Set<string>;
-  duumOn: boolean;
   scoreTarget: number;
   freeNextTurn: boolean;
   winnerId: number | null;
@@ -34,7 +33,6 @@ interface GameState {
 
 interface StartConfig {
   playerNames: string[]; // 1..6 ; en mode 1 joueur, l'IA est ajoutée d'office
-  duumOn: boolean;
   scoreTarget: number;
 }
 
@@ -44,7 +42,6 @@ const initial = (): GameState => ({
   currentPlayerIdx: 0,
   chain: [],
   usedWords: new Set(),
-  duumOn: true,
   scoreTarget: 50,
   freeNextTurn: false,
   winnerId: null,
@@ -85,7 +82,7 @@ class Store extends EventTarget {
         isAI: true,
       });
     }
-    const firstWord = pickWord(null, dict, new Set(), cfg.duumOn, { strategy: 'random' });
+    const firstWord = pickWord(null, dict, new Set(), { strategy: 'random' });
     const used = new Set<string>();
     const chain: Move[] = [];
     if (firstWord) {
@@ -94,7 +91,7 @@ class Store extends EventTarget {
         word: firstWord,
         playerId: -1,             // -1 = système (mot d'amorce)
         auto: true,
-        isHanbang: isHanbang(firstWord, dict, cfg.duumOn),
+        isHanbang: isHanbang(firstWord, dict),
       });
     }
     this.s = {
@@ -103,7 +100,6 @@ class Store extends EventTarget {
       currentPlayerIdx: 0,
       chain,
       usedWords: used,
-      duumOn: cfg.duumOn,
       scoreTarget: cfg.scoreTarget,
       freeNextTurn: chain[0]?.isHanbang ?? true,
       winnerId: null,
@@ -125,7 +121,6 @@ class Store extends EventTarget {
     const dict = getDict();
     const result = validateMove(word, {
       prevWord: this.s.freeNextTurn ? null : this.prevWord(),
-      duumOn: this.s.duumOn,
       freeTurn: this.s.freeNextTurn,
       dict,
       used: this.s.usedWords,
@@ -140,7 +135,7 @@ class Store extends EventTarget {
     if (this.s.phase !== 'playing') return { played: null };
     const dict = getDict();
     const prev = this.s.freeNextTurn ? null : this.prevWord();
-    const w = pickWord(prev, dict, this.s.usedWords, this.s.duumOn, { strategy: 'random' });
+    const w = pickWord(prev, dict, this.s.usedWords, { strategy: 'random' });
     if (!w) return { played: null };
     this.applyMove(w, true);
     return { played: w };
@@ -151,7 +146,7 @@ class Store extends EventTarget {
     if (this.s.phase !== 'playing') return;
     const dict = getDict();
     const prev = this.s.freeNextTurn ? null : this.prevWord();
-    const w = pickWord(prev, dict, this.s.usedWords, this.s.duumOn, {
+    const w = pickWord(prev, dict, this.s.usedWords, {
       strategy: 'safe-first',
     });
     if (!w) {
@@ -164,7 +159,7 @@ class Store extends EventTarget {
 
   private applyMove(word: string, auto: boolean) {
     const dict = getDict();
-    const isHb = isHanbang(word, dict, this.s.duumOn);
+    const isHb = isHanbang(word, dict);
     const player = this.s.players[this.s.currentPlayerIdx]!;
     if (!auto) player.score += 1;
     this.s.chain.push({

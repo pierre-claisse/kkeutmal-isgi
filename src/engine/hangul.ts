@@ -35,16 +35,11 @@ export function firstSyllable(word: string): string {
 
 /**
  * Renvoie l'ensemble des syllabes initiales acceptables pour un mot
- * succédant à un mot finissant par `tail`.
- *
- * - duumOn=false → [tail] uniquement (jeu strict).
- * - duumOn=true  → [tail, transformée 두음 법칙] si applicable.
- *
- * Application unidirectionnelle : on accepte la forme originelle ET sa
- * transformation, mais pas l'inverse.
+ * succédant à un mot finissant par `tail`. Application unidirectionnelle
+ * (on accepte la forme originelle ET sa transformation 두음, jamais
+ * l'inverse) — le 두음 법칙 est toujours actif dans le jeu.
  */
-export function acceptableInitials(tail: string, duumOn: boolean): string[] {
-  if (!duumOn) return [tail];
+export function acceptableInitials(tail: string): string[] {
   const mapped = DUUM_TABLE[tail];
   return mapped ? [tail, mapped] : [tail];
 }

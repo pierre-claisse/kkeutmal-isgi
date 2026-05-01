@@ -17,7 +17,6 @@ type ValidationError =
 
 interface ValidateContext {
   prevWord: string | null;     // null → premier coup, ou tour libre après 한방단어
-  duumOn: boolean;
   freeTurn: boolean;            // tour libre (après 한방단어 ou premier coup)
   dict: Dict;
   used: Set<string>;
@@ -31,7 +30,7 @@ export function validateMove(word: string, ctx: ValidateContext): ValidationResu
   if (!ctx.dict.words.has(w)) return { ok: false, reason: 'not-in-dict' };
   if (ctx.used.has(w)) return { ok: false, reason: 'already-used' };
   if (!ctx.freeTurn && ctx.prevWord) {
-    const tails = acceptableInitials(lastSyllable(ctx.prevWord), ctx.duumOn);
+    const tails = acceptableInitials(lastSyllable(ctx.prevWord));
     if (!tails.includes(firstSyllable(w))) {
       return { ok: false, reason: 'wrong-initial' };
     }
@@ -40,8 +39,8 @@ export function validateMove(word: string, ctx: ValidateContext): ValidationResu
 }
 
 /**
- * Détermine si le mot est un 한방단어 : la dernière syllabe (étendue par 두음
- * si toggle ON) n'a aucun successeur DIFFÉRENT du mot lui-même dans le
+ * Détermine si le mot est un 한방단어 : la dernière syllabe (étendue par
+ * 두음 법칙) n'a aucun successeur DIFFÉRENT du mot lui-même dans le
  * dictionnaire.
  *
  * On ignore l'historique `used` (intrinsèque au lexique, pas à la partie),
@@ -49,8 +48,8 @@ export function validateMove(word: string, ctx: ValidateContext): ValidationResu
  * possible est lui-même (ex. 곧곧, dont la finale 곧 n'a que 곧곧 comme
  * mot-débutant) est de facto un cul-de-sac.
  */
-export function isHanbang(word: string, dict: Dict, duumOn: boolean): boolean {
-  const tails = acceptableInitials(lastSyllable(word), duumOn);
+export function isHanbang(word: string, dict: Dict): boolean {
+  const tails = acceptableInitials(lastSyllable(word));
   for (const t of tails) {
     const bucket = dict.byInitial.get(t);
     if (!bucket) continue;
