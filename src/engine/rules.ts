@@ -39,22 +39,30 @@ export function validateMove(word: string, ctx: ValidateContext): ValidationResu
 }
 
 /**
- * Détermine si le mot est un 한방단어 : la dernière syllabe (étendue par
- * 두음 법칙) n'a aucun successeur DIFFÉRENT du mot lui-même dans le
- * dictionnaire.
+ * Détermine si le mot est un 한방단어 dans le contexte de la partie : la
+ * dernière syllabe (étendue par 두음 법칙) n'a aucun successeur jouable.
  *
- * On ignore l'historique `used` (intrinsèque au lexique, pas à la partie),
- * mais on exclut le mot courant : un mot dont la seule continuation
- * possible est lui-même (ex. 곧곧, dont la finale 곧 n'a que 곧곧 comme
- * mot-débutant) est de facto un cul-de-sac.
+ * Un successeur est exclu si :
+ *  - c'est le mot lui-même (cas du self-loop comme 곧곧)
+ *  - il a déjà été joué dans la partie (cas de l'épuisement, par ex.
+ *    사이즈 quand 즈음 est déjà passé)
+ *
+ * Quand `used` est omis, le check est purement structurel (sur le
+ * lexique uniquement).
  */
-export function isHanbang(word: string, dict: Dict): boolean {
+export function isHanbang(
+  word: string,
+  dict: Dict,
+  used?: ReadonlySet<string>,
+): boolean {
   const tails = acceptableInitials(lastSyllable(word));
   for (const t of tails) {
     const bucket = dict.byInitial.get(t);
     if (!bucket) continue;
     for (const w of bucket) {
-      if (w !== word) return false;
+      if (w === word) continue;
+      if (used?.has(w)) continue;
+      return false;
     }
   }
   return true;

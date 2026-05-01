@@ -91,7 +91,7 @@ class Store extends EventTarget {
         word: firstWord,
         playerId: -1,             // -1 = système (mot d'amorce)
         auto: true,
-        isHanbang: isHanbang(firstWord, dict),
+        isHanbang: isHanbang(firstWord, dict, used),
       });
     }
     this.s = {
@@ -159,7 +159,10 @@ class Store extends EventTarget {
 
   private applyMove(word: string, auto: boolean) {
     const dict = getDict();
-    const isHb = isHanbang(word, dict);
+    // On passe usedWords (qui ne contient pas encore `word`) pour que
+    // le check 한방 prenne en compte l'épuisement des successeurs en cours
+    // de partie.
+    const isHb = isHanbang(word, dict, this.s.usedWords);
     const player = this.s.players[this.s.currentPlayerIdx]!;
     if (!auto) player.score += 1;
     this.s.chain.push({
