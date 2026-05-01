@@ -191,11 +191,14 @@ function drawPaths(
       // Même rang : segment droit
       d = `M ${x1},${y1} L ${x2},${y2}`;
     } else {
-      // Cross-row : U couché spacieux (control points horizontaux loin pour
-      // une boucle large et détendue).
-      const side = dirA;
-      const bow = Math.max(55, Math.abs(y2 - y1));
-      d = `M ${x1},${y1} C ${x1 + side * bow},${y1} ${x2 + side * bow},${y2} ${x2},${y2}`;
+      // Cross-row : U couché. Les deux points de contrôle partagent un même X
+      // à l'extérieur du galet le plus éloigné — la boucle s'épanouit autour
+      // de cet axe avec des tangentes horizontales aux deux extrémités, et
+      // reste élégante même si x1 et x2 sont très distants horizontalement.
+      const outsideX = dirA === 1
+        ? Math.max(x1, x2) + 80
+        : Math.min(x1, x2) - 80;
+      d = `M ${x1},${y1} C ${outsideX},${y1} ${outsideX},${y2} ${x2},${y2}`;
     }
 
     const path = document.createElementNS(SVG_NS, 'path');
