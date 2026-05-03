@@ -917,19 +917,27 @@ fieldset {
     min-width: 40px;
     font-size: 0.92rem;
   }
+  /* minmax(0, 1fr) au lieu de 1fr (= minmax(auto, 1fr)) : force la
+     colonne à pouvoir shrinker à 0. Le auto par défaut respecte le
+     min-content du contenu (notamment la taille intrinsèque de
+     l'<input> ~20 chars), ce qui faisait déborder la grid → la card
+     → l'écran. */
   .players-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 8px;
+    min-width: 0;
   }
   .player-input {
     padding: 6px 8px;
     gap: 8px;
+    min-width: 0;
   }
   .player-input input {
     font-size: 0.95rem;
+    width: 0;
   }
   .player-tag {
-    width: 24px;
+    flex: 0 0 24px;
     font-size: 0.85rem;
   }
   .mode-value {
