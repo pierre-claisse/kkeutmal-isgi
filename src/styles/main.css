@@ -892,17 +892,60 @@ fieldset {
    jeu (occupe trop de place), et on rend le clavier hangul fluide en
    répartissant la largeur entre les touches. */
 @media (max-width: 480px) and (pointer: coarse) {
-  /* HOME */
+  /* HOME — tout est compacté pour le viewport mobile (412 px) :
+     paddings, font-sizes et min-widths réduits. */
   .home-form {
-    padding: 24px 14px 32px;
-    gap: 12px;
+    padding: 16px 12px 24px;
+    gap: 10px;
   }
   .card {
-    padding: 14px 14px;
-    gap: 12px;
+    padding: 12px 12px;
+    gap: 10px;
+  }
+  .card legend {
+    font-size: 0.82rem;
+    padding: 0 6px;
+  }
+  .row {
+    gap: 6px;
+  }
+  .radios {
+    gap: 6px;
+  }
+  .pill {
+    padding: 6px 10px;
+    min-width: 40px;
+    font-size: 0.92rem;
   }
   .players-grid {
     grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .player-input {
+    padding: 6px 8px;
+    gap: 8px;
+  }
+  .player-input input {
+    font-size: 0.95rem;
+  }
+  .player-tag {
+    width: 24px;
+    font-size: 0.85rem;
+  }
+  .mode-value {
+    gap: 10px;
+  }
+  .mode-value > span {
+    font-size: 0.88rem;
+  }
+  .mode-value input[type='number'] {
+    width: 88px;
+    padding: 6px 8px;
+    font-size: 0.95rem;
+  }
+  .cta {
+    padding: 12px 20px;
+    font-size: 1rem;
   }
   .title {
     font-size: clamp(2rem, 9vw, 2.6rem);
@@ -929,7 +972,9 @@ fieldset {
   }
   .turn-card {
     order: 1;
-    flex: 1 1 auto;
+    /* fit-content : largeur calée sur le nom du joueur, ne s'étire pas
+       à la largeur disponible. */
+    flex: 0 1 auto;
     min-width: 0;
     padding: 8px 12px;
     border-left-width: 3px;
@@ -944,6 +989,9 @@ fieldset {
   .quit-button {
     order: 2;
     flex: 0 0 auto;
+    /* margin-left: auto absorbe tout l'espace libre entre turn-card et
+       quit-button → pousse le quit à droite de la 1ère ligne. */
+    margin-left: auto;
     width: 36px;
     height: 36px;
     font-size: 0.95rem;
