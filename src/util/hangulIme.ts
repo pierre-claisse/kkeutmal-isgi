@@ -86,12 +86,6 @@ export class HangulComposer {
     return this.committed + composeOne(this.pending);
   }
 
-  /** Synchronise depuis l'extérieur (frappe physique, paste, vidage…) */
-  setText(value: string) {
-    this.committed = value;
-    this.pending = empty();
-  }
-
   reset() {
     this.committed = '';
     this.pending = empty();

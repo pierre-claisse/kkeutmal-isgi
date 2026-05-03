@@ -1,4 +1,4 @@
-// Écran de jeu : chaîne, input, IA.
+// Écran de jeu : chaîne, clavier virtuel, IA.
 
 import { ERROR_MESSAGES } from '../../engine/rules';
 import { store } from '../../state/store';
@@ -7,10 +7,6 @@ import { buildHangulKeyboard } from '../components/hangulKeyboard';
 import { buildPebbleChain, type PebbleData } from '../components/pebbleChain';
 import { h } from '../dom';
 import { colorFor } from '../theme';
-
-// État UI persistant entre re-renders : une fois le clavier virtuel
-// ouvert par l'utilisateur, il reste ouvert tant qu'il ne le ferme pas.
-let kbOpen = false;
 
 export function renderGame(root: HTMLElement) {
   const s = store.state;
@@ -27,83 +23,51 @@ export function renderGame(root: HTMLElement) {
     }
   };
 
-  const inputEl = h('input', {
-    type: 'text',
-    inputmode: 'text',
-    lang: 'ko',
-    autocomplete: 'off',
-    autocorrect: 'off',
-    autocapitalize: 'off',
-    spellcheck: false,
-    placeholder: prev
-      ? s.freeNextTurn
-        ? '아무 단어나 입력 (자유)'
-        : `${prev.word.charAt(prev.word.length - 1)}(으)로 시작하는 단어`
-      : '첫 단어를 입력',
-    'aria-label': '단어 입력',
-    disabled: me.isAI,
-  }) as HTMLInputElement;
-
-  // IME virtuel : pour les claviers physiques sans disposition coréenne.
   const composer = new HangulComposer();
-  inputEl.addEventListener('input', () => {
-    // Frappe physique → on resynchronise le composer (pending vidé).
-    composer.setText(inputEl.value);
-  });
+  const placeholder = prev
+    ? s.freeNextTurn
+      ? '아무 단어나 입력 (자유)'
+      : `${prev.word.charAt(prev.word.length - 1)}(으)로 시작하는 단어`
+    : '첫 단어를 입력';
 
-  const syncFromComposer = () => {
-    inputEl.value = composer.text();
-    inputEl.focus();
+  // Display read-only : seul le clavier virtuel modifie le composer ;
+  // ce div mirroir le texte (placeholder grisé quand vide).
+  const displayEl = h(
+    'div',
+    {
+      class: 'composer-display empty',
+      role: 'textbox',
+      'aria-readonly': 'true',
+      'aria-label': '단어 입력',
+    },
+    placeholder,
+  );
+
+  const refreshDisplay = () => {
+    const txt = composer.text();
+    if (txt) {
+      displayEl.textContent = txt;
+      displayEl.classList.remove('empty');
+    } else {
+      displayEl.textContent = placeholder;
+      displayEl.classList.add('empty');
+    }
   };
 
-  const keyboardWrap = h(
-    'div',
-    { class: 'kb-wrap', hidden: !kbOpen },
-    buildHangulKeyboard({
-      onJamo: (j) => {
-        composer.inputJamo(j);
-        syncFromComposer();
-      },
-      onBackspace: () => {
-        composer.backspace();
-        syncFromComposer();
-      },
-    }),
-  );
-
-  const kbToggle = h(
-    'button',
-    {
-      type: 'button',
-      class: `btn kb-toggle${kbOpen ? ' active' : ''}`,
-      disabled: me.isAI,
-      title: '한글 자판',
-      'aria-pressed': String(kbOpen),
-      onclick: () => {
-        kbOpen = !kbOpen;
-        keyboardWrap.hidden = !kbOpen;
-        kbToggle.classList.toggle('active', kbOpen);
-        kbToggle.setAttribute('aria-pressed', String(kbOpen));
-      },
-    },
-    '한',
-  );
-
-  const handleSubmit = (e: Event) => {
-    e.preventDefault();
+  const handleSubmit = (e?: Event) => {
+    if (e) e.preventDefault();
     if (me.isAI) return;
-    const v = inputEl.value;
+    const v = composer.text();
     if (!v.trim()) return;
     submit(v);
-    inputEl.value = '';
     composer.reset();
+    refreshDisplay();
   };
 
   const inputBar = h(
     'form',
     { class: 'input-bar', onsubmit: handleSubmit },
-    inputEl,
-    kbToggle,
+    displayEl,
     h('button', { type: 'submit', class: 'btn primary', disabled: me.isAI }, '제출'),
     h(
       'button',
@@ -115,13 +79,27 @@ export function renderGame(root: HTMLElement) {
           if (me.isAI) return;
           const r = store.autoFind();
           if (!r.played) errBox.textContent = '가능한 단어가 없습니다.';
-          inputEl.value = '';
           composer.reset();
+          refreshDisplay();
         },
       },
       '자동 찾기',
     ),
   );
+
+  const keyboard = buildHangulKeyboard({
+    onJamo: (j) => {
+      if (me.isAI) return;
+      composer.inputJamo(j);
+      refreshDisplay();
+    },
+    onBackspace: () => {
+      if (me.isAI) return;
+      composer.backspace();
+      refreshDisplay();
+    },
+  });
+  if (me.isAI) keyboard.classList.add('disabled');
 
   const quitBtn = h(
     'button',
@@ -201,12 +179,11 @@ export function renderGame(root: HTMLElement) {
     header,
     chainList,
     errBox,
-    keyboardWrap,
     inputBar,
+    keyboard,
   );
 
   root.appendChild(layout);
-  if (!me.isAI) inputEl.focus();
 
   // Coup IA après 800ms
   if (me.isAI) {

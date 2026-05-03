@@ -363,10 +363,7 @@ html {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  /* Padding-bottom = safe-area + input-bar height + 16 px (= même écart
-     qu'entre header et chaîne) → la zone vide entre chaîne et input
-     est égale à celle entre joueurs et chaîne. */
-  padding: 16px 16px calc(env(safe-area-inset-bottom) + 104px);
+  padding: 16px 16px calc(env(safe-area-inset-bottom) + 16px);
   width: 100%;
 }
 
@@ -634,39 +631,35 @@ html {
   background: var(--bg-1);
   border-radius: var(--radius);
   border: 1px solid var(--border);
-  /* Toujours ancré en bas du viewport, largeur exactement adaptée au
-     contenu (input fixé + boutons), centrée horizontalement. */
-  position: fixed;
-  bottom: calc(env(safe-area-inset-bottom) + 16px);
-  left: 16px;
-  right: 16px;
   margin-inline: auto;
   width: fit-content;
-  max-width: calc(100% - 32px);
-  z-index: 40;
+  max-width: 100%;
 }
 
-.input-bar input {
+/* Affichage read-only du composer (le clavier virtuel est l'unique
+   source de saisie). Visuellement identique à un input. */
+.composer-display {
   flex: 0 0 320px;
   min-width: 0;
   background: var(--bg-2);
   border: 1px solid var(--border);
-  outline: none;
   color: var(--fg);
   padding: 12px 14px;
   border-radius: var(--radius-sm);
   font-family: var(--font-body);
   font-size: 1.15rem;
   font-weight: 700;
-  transition: border-color 0.15s;
+  line-height: 1.3;
+  min-height: 1.3em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  user-select: none;
 }
 
-.input-bar input:focus {
-  border-color: var(--accent);
-}
-
-.input-bar input:disabled {
-  opacity: 0.4;
+.composer-display.empty {
+  color: var(--fg-mute);
+  font-weight: 500;
 }
 
 .btn {
@@ -722,38 +715,9 @@ html {
 
 /* ==================== HANGUL VIRTUAL KEYBOARD ==================== */
 
-.kb-toggle {
-  font-family: var(--font-display);
-  font-weight: 700;
-  min-width: 44px;
-  padding-left: 12px;
-  padding-right: 12px;
-}
-
-.kb-toggle.active {
-  background: var(--accent-soft);
-  color: var(--accent);
-  border-color: var(--accent);
-}
-
-/* Wrap fixe juste au-dessus de l'input (avec 16 px d'écart). */
-.kb-wrap {
-  position: fixed;
-  bottom: calc(env(safe-area-inset-bottom) + 104px);
-  left: 0;
-  right: 0;
-  z-index: 50;
-  display: flex;
-  justify-content: center;
-  /* Le wrap couvre toute la largeur mais laisse passer les clics ;
-     seul le panel keyboard intercepte le pointeur. */
-  pointer-events: none;
-}
-
-.kb-wrap > * {
-  pointer-events: auto;
-}
-
+/* Toujours visible en bas du layout (élément normal du flex column).
+   Le composer-display de l'input-bar est l'unique zone d'affichage du
+   texte tapé ; le clavier est l'unique source de saisie. */
 .hangul-keyboard {
   background: var(--kb-bg, var(--bg-1));
   backdrop-filter: blur(10px);
@@ -768,9 +732,15 @@ html {
   flex-direction: column;
   gap: 6px;
   user-select: none;
+  margin-inline: auto;
   /* Largeur strictement adaptée aux touches. */
   width: fit-content;
-  max-width: calc(100% - 32px);
+  max-width: 100%;
+}
+
+.hangul-keyboard.disabled {
+  opacity: 0.4;
+  pointer-events: none;
 }
 
 .hk-row {
@@ -915,7 +885,7 @@ html {
 
   /* GAME — layout général */
   .layout {
-    padding: 10px 10px calc(env(safe-area-inset-bottom) + 88px);
+    padding: 10px 10px calc(env(safe-area-inset-bottom) + 10px);
     gap: 10px;
   }
 
@@ -1000,20 +970,15 @@ html {
     font-size: 0.9rem;
   }
 
-  /* INPUT BAR : pleine largeur, input fluide, boutons compacts. */
+  /* INPUT BAR : pleine largeur, display fluide, boutons compacts. */
   .input-bar {
-    bottom: calc(env(safe-area-inset-bottom) + 8px);
-    left: 8px;
-    right: 8px;
-    width: auto;
+    width: 100%;
     max-width: none;
-    margin-inline: 0;
     padding: 8px;
     gap: 6px;
   }
-  .input-bar input {
+  .composer-display {
     flex: 1 1 auto;
-    min-width: 0;
     padding: 10px 12px;
     font-size: 1rem;
   }
@@ -1021,21 +986,11 @@ html {
     padding: 10px 12px;
     font-size: 0.9rem;
   }
-  .kb-toggle {
-    min-width: 40px;
-    padding-left: 10px;
-    padding-right: 10px;
-  }
 
   /* KEYBOARD : largeur fluide, touches qui se partagent l'espace
      (flex: 1) pour ne jamais déborder. Stagger 두벌식 conservé mais
      plus subtil. La rangée des touches utilitaires (shift/backspace)
      garde des largeurs fixes. */
-  .kb-wrap {
-    bottom: calc(env(safe-area-inset-bottom) + 76px);
-    padding: 0 8px;
-    box-sizing: border-box;
-  }
   .hangul-keyboard {
     width: 100%;
     max-width: none;
