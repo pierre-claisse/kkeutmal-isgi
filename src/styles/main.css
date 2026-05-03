@@ -210,6 +210,20 @@ html {
   gap: 18px;
 }
 
+/* Réinitialise le min-width: min-content par défaut des navigateurs sur
+   les <fieldset> : sans ça, ils refusent de shrinker en dessous de leur
+   contenu et débordent sur mobile (viewport étroit). */
+fieldset {
+  min-width: 0;
+}
+
+/* Idem pour les inputs flex : leur min-width: auto vaut leur taille
+   par défaut (~20 chars), ce qui empêche leur conteneur de shrinker. */
+.player-input input,
+.mode-value input {
+  min-width: 0;
+}
+
 .card {
   background: var(--bg-1);
   border: 1px solid var(--border);
@@ -902,7 +916,10 @@ html {
 
   /* HEADER : turn-card + quit-button sur la 1ère ligne ; scores en
      dessous sur la 2e. Le titre du jeu et le rappel de cible sont
-     masqués (économie de hauteur). */
+     masqués (économie de hauteur). L'ordre DOM (turn / scores / quit)
+     est conservé ; on réordonne visuellement via flex order pour que
+     le quit reste à droite de la 1ère ligne au lieu de tomber
+     en 3e ligne après les scores. */
   .game-header {
     gap: 8px;
   }
@@ -911,6 +928,7 @@ html {
     display: none;
   }
   .turn-card {
+    order: 1;
     flex: 1 1 auto;
     min-width: 0;
     padding: 8px 12px;
@@ -924,12 +942,15 @@ html {
     font-size: 1.15rem;
   }
   .quit-button {
+    order: 2;
+    flex: 0 0 auto;
     width: 36px;
     height: 36px;
     font-size: 0.95rem;
   }
   .scores {
-    width: 100%;
+    order: 3;
+    flex: 1 1 100%;
     justify-content: space-between;
     gap: 4px;
   }
