@@ -166,6 +166,11 @@ function drawPaths(
 
   while (svg.firstChild) svg.removeChild(svg.firstChild);
 
+  // Amplitude des U cross-row, pilotée par CSS pour s'adapter aux marges
+  // disponibles selon le viewport (desktop = 80, mobile = 32).
+  const bowVar = getComputedStyle(stage).getPropertyValue('--pebble-bow').trim();
+  const bow = parseFloat(bowVar) || 80;
+
   const pebbleEls = rowsContainer.querySelectorAll<HTMLElement>('.pebble');
   for (let i = 0; i < pebbleEls.length - 1; i++) {
     const a = pebbleEls[i]!;
@@ -196,8 +201,8 @@ function drawPaths(
       // de cet axe avec des tangentes horizontales aux deux extrémités, et
       // reste élégante même si x1 et x2 sont très distants horizontalement.
       const outsideX = dirA === 1
-        ? Math.max(x1, x2) + 80
-        : Math.min(x1, x2) - 80;
+        ? Math.max(x1, x2) + bow
+        : Math.min(x1, x2) - bow;
       d = `M ${x1},${y1} C ${outsideX},${y1} ${outsideX},${y2} ${x2},${y2}`;
     }
 

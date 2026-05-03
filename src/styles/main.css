@@ -476,8 +476,10 @@ html {
   background: var(--bg-1);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  /* Marges internes latérales généreuses : laissent respirer les U
-     cross-row et donnent de l'air autour des pebbles. */
+  /* --pebble-bow = amplitude latérale des courbes U cross-row, lue par
+     pebbleChain.ts. Le padding doit être >= bow pour que les boucles
+     restent visibles (sinon overflow-x hidden les coupe). */
+  --pebble-bow: 80px;
   padding: 24px 120px;
   /* Remplit toute la hauteur disponible jusqu'à l'input fixe (via le
      padding-bottom du layout). flex/min-height pour permettre le scroll
@@ -890,41 +892,185 @@ html {
 }
 
 /* ==================== RESPONSIVE — Galaxy S25 Ultra portrait ==================== */
+/* Viewport ~412×915 portrait. On compresse padding et tailles, on réorganise
+   le header en 2 rangs (turn + quit | scores), on retire le grand titre du
+   jeu (occupe trop de place), et on rend le clavier hangul fluide en
+   répartissant la largeur entre les touches. */
 @media (max-width: 480px) and (pointer: coarse) {
+  /* HOME */
+  .home-form {
+    padding: 24px 14px 32px;
+    gap: 12px;
+  }
+  .card {
+    padding: 14px 14px;
+    gap: 12px;
+  }
+  .players-grid {
+    grid-template-columns: 1fr;
+  }
+  .title {
+    font-size: clamp(2rem, 9vw, 2.6rem);
+  }
+
+  /* GAME — layout général */
+  .layout {
+    padding: 10px 10px calc(env(safe-area-inset-bottom) + 88px);
+    gap: 10px;
+  }
+
+  /* HEADER : turn-card + quit-button sur la 1ère ligne ; scores en
+     dessous sur la 2e. Le titre du jeu et le rappel de cible sont
+     masqués (économie de hauteur). */
+  .game-header {
+    gap: 8px;
+  }
+  .game-title,
+  .game-target {
+    display: none;
+  }
+  .turn-card {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 8px 12px;
+    border-left-width: 3px;
+  }
+  .turn-label {
+    font-size: 0.62rem;
+    letter-spacing: 0.14em;
+  }
+  .turn-name {
+    font-size: 1.15rem;
+  }
   .quit-button {
     width: 36px;
     height: 36px;
     font-size: 0.95rem;
   }
-  .layout {
-    padding: 12px;
-    gap: 10px;
-  }
-  .game-header {
-    gap: 8px;
-  }
-  .turn-card {
-    flex: 1 1 100%;
-    min-width: 0;
-  }
   .scores {
     width: 100%;
     justify-content: space-between;
+    gap: 4px;
   }
+  .score {
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 4px 4px;
+  }
+  .score .name {
+    font-size: 0.65rem;
+    max-width: 100%;
+  }
+  .score .pts {
+    font-size: 1.05rem;
+  }
+
+  /* PEBBLE CHAIN : padding latéral réduit drastiquement pour exploiter
+     la largeur de 412 px. Le bow des courbes U est aussi réduit en
+     conséquence pour rester visible dans la padding. */
   .pebble-chain {
-    max-height: none;
-    flex: 1;
+    --pebble-bow: 32px;
+    padding: 14px 32px;
   }
+  .pebble-rows {
+    gap: 18px;
+  }
+  .pebble-row {
+    gap: 12px;
+  }
+  .pebble {
+    padding: 5px 11px 5px 8px;
+    gap: 5px;
+  }
+  .pebble .p-word {
+    font-size: 0.95rem;
+  }
+  .pebble .p-num {
+    min-width: 19px;
+    height: 19px;
+    font-size: 0.62rem;
+    padding: 0 4px;
+  }
+  .pebble .p-author {
+    top: -13px;
+    font-size: 0.56rem;
+    padding: 0 4px;
+  }
+  .pebble .p-lookup {
+    font-size: 0.9rem;
+  }
+
+  /* INPUT BAR : pleine largeur, input fluide, boutons compacts. */
   .input-bar {
-    position: sticky;
-    bottom: env(safe-area-inset-bottom);
-    z-index: 10;
+    bottom: calc(env(safe-area-inset-bottom) + 8px);
+    left: 8px;
+    right: 8px;
+    width: auto;
+    max-width: none;
+    margin-inline: 0;
+    padding: 8px;
+    gap: 6px;
   }
-  .home-form {
-    padding: 20px 14px 48px;
-    gap: 14px;
+  .input-bar input {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 10px 12px;
+    font-size: 1rem;
   }
-  .players-grid {
-    grid-template-columns: 1fr;
+  .btn {
+    padding: 10px 12px;
+    font-size: 0.9rem;
+  }
+  .kb-toggle {
+    min-width: 40px;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  /* KEYBOARD : largeur fluide, touches qui se partagent l'espace
+     (flex: 1) pour ne jamais déborder. Stagger 두벌식 conservé mais
+     plus subtil. La rangée des touches utilitaires (shift/backspace)
+     garde des largeurs fixes. */
+  .kb-wrap {
+    bottom: calc(env(safe-area-inset-bottom) + 76px);
+    padding: 0 8px;
+    box-sizing: border-box;
+  }
+  .hangul-keyboard {
+    width: 100%;
+    max-width: none;
+    padding: 6px;
+    gap: 4px;
+  }
+  .hk-row {
+    gap: 3px;
+  }
+  .hk-row:nth-child(2) {
+    padding-left: 18px;
+  }
+  .hk-row:nth-child(3) {
+    padding-left: 36px;
+  }
+  .hk-key {
+    flex: 1 1 0;
+    width: auto;
+    min-width: 0;
+    height: 40px;
+    font-size: 1.05rem;
+  }
+  .hk-util-key {
+    flex: 0 0 auto;
+    min-width: 64px;
+    padding: 0 14px;
+  }
+
+  /* END */
+  .end-screen {
+    padding: 32px 16px;
+    gap: 20px;
+  }
+  .podium-item {
+    padding: 12px 14px;
+    gap: 12px;
   }
 }
