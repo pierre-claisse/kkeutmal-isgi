@@ -631,7 +631,9 @@ html {
   background: var(--bg-1);
   border-radius: var(--radius);
   border: 1px solid var(--border);
-  margin-inline: auto;
+  /* Ancré à gauche du layout pour laisser la place du clavier flottant
+     à droite (sur la même ligne horizontale → pas de gaspillage). */
+  align-self: flex-start;
   width: fit-content;
   max-width: 100%;
 }
@@ -715,9 +717,11 @@ html {
 
 /* ==================== HANGUL VIRTUAL KEYBOARD ==================== */
 
-/* Toujours visible en bas du layout (élément normal du flex column).
-   Le composer-display de l'input-bar est l'unique zone d'affichage du
-   texte tapé ; le clavier est l'unique source de saisie. */
+/* Desktop : flottant en position: fixed, par défaut bottom-right
+   (à côté de l'input-bar ancré à gauche, sur la même ligne). Le drag
+   handler dans game.ts permet de le déplacer librement ; il bascule
+   alors les inline styles vers top/left. Sur mobile, surchargé en
+   position: static (cf. media query plus bas). */
 .hangul-keyboard {
   background: var(--kb-bg, var(--bg-1));
   backdrop-filter: blur(10px);
@@ -732,10 +736,17 @@ html {
   flex-direction: column;
   gap: 6px;
   user-select: none;
-  margin-inline: auto;
-  /* Largeur strictement adaptée aux touches. */
   width: fit-content;
   max-width: 100%;
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  z-index: 50;
+  cursor: grab;
+}
+
+.hangul-keyboard.dragging {
+  cursor: grabbing;
 }
 
 .hangul-keyboard.disabled {
@@ -885,7 +896,7 @@ html {
 
   /* GAME — layout général */
   .layout {
-    padding: 10px 10px calc(env(safe-area-inset-bottom) + 10px);
+    padding: 10px 10px max(env(safe-area-inset-bottom), 2px);
     gap: 10px;
   }
 
@@ -970,9 +981,11 @@ html {
     font-size: 0.9rem;
   }
 
-  /* INPUT BAR : pleine largeur, display fluide, boutons compacts. */
+  /* INPUT BAR : pleine largeur, display fluide, boutons compacts.
+     align-self stretch pour annuler le flex-start desktop. */
   .input-bar {
-    width: 100%;
+    align-self: stretch;
+    width: auto;
     max-width: none;
     padding: 8px;
     gap: 6px;
@@ -987,11 +1000,17 @@ html {
     font-size: 0.9rem;
   }
 
-  /* KEYBOARD : largeur fluide, touches qui se partagent l'espace
-     (flex: 1) pour ne jamais déborder. Stagger 두벌식 conservé mais
-     plus subtil. La rangée des touches utilitaires (shift/backspace)
+  /* KEYBOARD : revient en flow normal (pas de drag sur mobile),
+     largeur fluide, touches qui se partagent l'espace (flex: 1)
+     pour ne jamais déborder. Stagger 두벌식 conservé mais plus
+     subtil. La rangée des touches utilitaires (shift/backspace)
      garde des largeurs fixes. */
   .hangul-keyboard {
+    position: static;
+    bottom: auto;
+    right: auto;
+    cursor: default;
+    margin-inline: auto;
     width: 100%;
     max-width: none;
     padding: 6px;

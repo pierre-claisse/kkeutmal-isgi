@@ -8,6 +8,49 @@ import { buildPebbleChain, type PebbleData } from '../components/pebbleChain';
 import { h } from '../dom';
 import { colorFor } from '../theme';
 
+// Position absolue du clavier après drag. Persiste entre re-renders
+// du game screen (un nouveau clavier est créé à chaque update du store).
+let kbPos: { left: number; top: number } | null = null;
+
+function makeKeyboardDraggable(el: HTMLElement) {
+  el.addEventListener('mousedown', (e) => {
+    // Clic sur une touche → on laisse le bouton gérer (pas de drag).
+    if ((e.target as HTMLElement).closest('button')) return;
+    e.preventDefault();
+
+    const rect = el.getBoundingClientRect();
+    const offsetX = e.clientX - rect.left;
+    const offsetY = e.clientY - rect.top;
+
+    // Bascule du positionnement bottom/right (CSS) vers top/left
+    // pour permettre un déplacement libre.
+    el.style.left = `${rect.left}px`;
+    el.style.top = `${rect.top}px`;
+    el.style.right = 'auto';
+    el.style.bottom = 'auto';
+    el.classList.add('dragging');
+
+    const onMove = (ev: MouseEvent) => {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      const nx = Math.max(0, Math.min(w - el.offsetWidth, ev.clientX - offsetX));
+      const ny = Math.max(0, Math.min(h - el.offsetHeight, ev.clientY - offsetY));
+      el.style.left = `${nx}px`;
+      el.style.top = `${ny}px`;
+      kbPos = { left: nx, top: ny };
+    };
+
+    const onUp = () => {
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseup', onUp);
+      el.classList.remove('dragging');
+    };
+
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
+  });
+}
+
 export function renderGame(root: HTMLElement) {
   const s = store.state;
   const me = s.players[s.currentPlayerIdx]!;
@@ -100,6 +143,19 @@ export function renderGame(root: HTMLElement) {
     },
   });
   if (me.isAI) keyboard.classList.add('disabled');
+
+  // Drag & drop du clavier : desktop uniquement. Sur mobile (S25 Ultra
+  // portrait), le clavier reste en flow normal, non déplaçable.
+  const isMobile = window.matchMedia('(max-width: 480px) and (pointer: coarse)').matches;
+  if (!isMobile) {
+    if (kbPos) {
+      keyboard.style.left = `${kbPos.left}px`;
+      keyboard.style.top = `${kbPos.top}px`;
+      keyboard.style.right = 'auto';
+      keyboard.style.bottom = 'auto';
+    }
+    makeKeyboardDraggable(keyboard);
+  }
 
   const quitBtn = h(
     'button',
